@@ -57,4 +57,6 @@ public class ChatRoomForCarpool {
     //participant가 읽었는지
     @Column(name="is_read_by_participant",nullable = false)
     private boolean isReadByParticipant;
+
+
 }

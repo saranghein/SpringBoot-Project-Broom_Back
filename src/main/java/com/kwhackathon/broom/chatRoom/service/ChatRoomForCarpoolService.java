@@ -1,6 +1,7 @@
 package com.kwhackathon.broom.chatRoom.service;
 
 import com.kwhackathon.broom.carpool.entity.CarpoolBoard;
+import com.kwhackathon.broom.chatMessage.repository.ChatMessageForCarpoolRepository;
 import com.kwhackathon.broom.chatRoom.dto.ChatRoomForCarpoolDto;
 import com.kwhackathon.broom.chatRoom.entity.ChatRoomForCarpool;
 import com.kwhackathon.broom.chatRoom.repository.ChatRoomForCarpoolRepository;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ChatRoomForCarpoolService {
     private final ChatRoomForCarpoolRepository chatRoomForCarpoolRepository;
+    private final ChatMessageForCarpoolRepository chatMessageForCarpoolRepository;
     private final UserService userService;
 
     // 채팅방 목록 조회
@@ -62,5 +64,10 @@ public class ChatRoomForCarpoolService {
                 });
 
     }
+    @Transactional
+    public void deleteChatRoom(String chatRoomId) {
+        chatMessageForCarpoolRepository.deleteByChatRoomId(chatRoomId);
 
+        chatRoomForCarpoolRepository.deleteById(chatRoomId);
+    }
 }

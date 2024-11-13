@@ -1,10 +1,12 @@
 package com.kwhackathon.broom.chatMessage.repository;
 
-import com.kwhackathon.broom.chatMessage.entity.ChatMessageForCarpool;
+import com.kwhackathon.broom.chatMessage.entity.ChatMessageForEarlyDeparture;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ChatMessageForCarpoolRepository extends JpaRepository<ChatMessageForCarpool, Long> {
+
+public interface ChatMessageForEarlyDepartureRepository extends JpaRepository<ChatMessageForEarlyDeparture, Long> {
     void deleteByChatRoomId(String chatRoomId);
+
 }

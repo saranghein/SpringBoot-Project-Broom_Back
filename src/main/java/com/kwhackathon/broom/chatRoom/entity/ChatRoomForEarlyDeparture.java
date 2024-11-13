@@ -1,9 +1,11 @@
 package com.kwhackathon.broom.chatRoom.entity;
 
+import com.kwhackathon.broom.chatMessage.entity.ChatMessageForCarpool;
 import com.kwhackathon.broom.chatMessage.entity.ChatMessageForEarlyDeparture;
 import com.kwhackathon.broom.earlyDepartureBoard.entity.EarlyDepartureBoard;
 import com.kwhackathon.broom.user.entity.User;
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -14,36 +16,45 @@ import java.util.UUID;
 @Entity
 @Table(name = "chat_room_for_early_departure")
 @EntityListeners(AuditingEntityListener.class)
+@Data
 public class ChatRoomForEarlyDeparture {
     @EqualsAndHashCode.Include
     @Id
     @Column(name = "chat_room_id", updatable = false, nullable = false)
     private String id = UUID.randomUUID().toString(); // UUID로 고유 ID 생성
 
+    //작성자 Id
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "author_id", nullable = false)
+    private User author;
 
+    //참여자 Id
+    @ManyToOne
+    @JoinColumn(name = "participant_id", nullable = false)
+    private User participant;
+
+    //카풀 게시판 id
     @ManyToOne
     @JoinColumn(name="early_departure_board_id",nullable = false)
     private EarlyDepartureBoard earlyDepartureBoard;
 
+    //채팅방 생성 날짜
     @Column(name = "created_at", updatable = false)
     @CreatedDate
     private LocalDateTime createdAt;
 
+    //최근 message id
     @OneToOne
     @JoinColumn(name = "last_chat_message_id")
-    private ChatMessageForEarlyDeparture chatMessageForEarlyDeparture; // 마지막 채팅 메시지
+    private ChatMessageForEarlyDeparture lastChatMessageForCarpool; // 마지막 채팅 메시지
 
-//    @ManyToMany(fetch = FetchType.EAGER)
-//    @JoinTable(
-//            name = "chatroom_user",
-//            joinColumns = @JoinColumn(name = "chatroom_id"),
-//            inverseJoinColumns = @JoinColumn(name = "user_id")
-//    )
-//    private Set<User> chatRoomMembers = new HashSet<>(); // 채팅방 멤버 목록
+    //author가 읽었는지(보류)
+    @Column(name="is_read_by_author",nullable = false)
+    private boolean isReadByAuthor;
 
-    @Column(name="is_read",nullable = false)
-    private boolean isRead;
+    //participant가 읽었는지
+    @Column(name="is_read_by_participant",nullable = false)
+    private boolean isReadByParticipant;
+
+
 }

@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +22,7 @@ public interface ChatMessageForCarpoolOperation {
 
     // 메시지 보내기
     @MessageMapping("chat.carpool.message")
-    public void sendMessage(@Payload ChatMessageForCarpoolDto.Request messageDto, Principal principal) ;
+    public void sendMessage(@Payload ChatMessageForCarpoolDto.Request messageDto, SimpMessageHeaderAccessor headerAccessor) ;
 
     // REST API로 채팅방에 메시지 전송
     @PostMapping("/carpool/chat/message/{chatRoomId}")
