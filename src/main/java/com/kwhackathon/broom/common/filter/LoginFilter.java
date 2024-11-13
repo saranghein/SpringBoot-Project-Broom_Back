@@ -8,11 +8,7 @@ import io.jsonwebtoken.io.IOException;
 
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kwhackathon.broom.common.dto.LoginResponseDto;
 import com.kwhackathon.broom.common.util.JwtUtil;
-import com.kwhackathon.broom.user.entity.User;
-import com.kwhackathon.broom.user.util.MilitaryChaplain;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -62,21 +58,23 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter{
         String refreshToken = jwtUtil.createJwt("refresh", userId, role, 24 * 60 * 60 * 1000L); // 24시간
 
         response.addHeader("Authorization", "Bearer " + accessToken); // 응답 헤더에 access토큰 설정
+        // response.addHeader("Refresh", "Bearer " + refreshToken); // 테스트용 리프레시 헤더
         response.addHeader(HttpHeaders.SET_COOKIE, createCookie("refresh", refreshToken).toString());// 응답시 쿠키에 refresh토큰 저장
 
         response.setStatus(HttpStatus.OK.value());
 
-        // 로그인 성공 시 로그인 한 사용자의 닉네임, 군종을 반환
-        User user = (User) authentication.getPrincipal();
-        String nickname = user.getNickname();
-        MilitaryChaplain militaryChaplain = user.getMilitaryChaplain();
+        // 로그인 성공 시 로그인 한 사용자의 정보를 반환
+        // User user = (User) authentication.getPrincipal();
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        String userJsonResponse = objectMapper.writeValueAsString(new LoginResponseDto(nickname, militaryChaplain));
+        // SuccessLoginresponseDto responseDto = new SuccessLoginresponseDto(user.getUserId(), user.getUsername(),
+        //         user.getName(), "");
+
+        // ObjectMapper objectMapper = new ObjectMapper();
+        // String userJsonResponse = objectMapper.writeValueAsString(responseDto);
         response.setCharacterEncoding("UTF-8");
-        response.setContentType("application/json");
+        response.setContentType("text/plain; charset=UTF-8");
         try (PrintWriter writer = response.getWriter()) {
-            writer.print(userJsonResponse);
+            writer.print("로그인에 성공하였습니다");
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();

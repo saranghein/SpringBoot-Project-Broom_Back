@@ -2,36 +2,27 @@ package com.kwhackathon.broom.user.entity;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.kwhackathon.broom.carpool.entity.CarpoolBoard;
-import com.kwhackathon.broom.team.entity.TeamBoard;
-import com.kwhackathon.broom.user.dto.request.UpdateUserInfoDto;
 import com.kwhackathon.broom.user.util.MilitaryChaplain;
 import com.kwhackathon.broom.user.util.Role;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
+@Setter
 public class User implements UserDetails {
     @Id
     @Column(name = "user_id", nullable = false)
@@ -54,12 +45,6 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role; // 권한 정보
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<CarpoolBoard> carpoolBoards;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<TeamBoard> teamBoards;
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> collection = new ArrayList<>();
@@ -75,15 +60,5 @@ public class User implements UserDetails {
     @Override
     public String getUsername() {
         return this.userId;
-    }
-
-    public void updateUserInfo(UpdateUserInfoDto dto) {
-        this.nickname = dto.getNickname();
-        this.dischargeYear = dto.getDischargeYear();
-        this.militaryChaplain = dto.getMilitaryChaplain();
-    }
-
-    public void updatePassword(String newPassword) {
-        this.password = newPassword;
     }
 }
