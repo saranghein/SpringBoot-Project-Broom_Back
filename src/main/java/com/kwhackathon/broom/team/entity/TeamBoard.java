@@ -1,4 +1,4 @@
-package com.kwhackathon.broom.carpool.entity;
+package com.kwhackathon.broom.team.entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -6,8 +6,8 @@ import java.time.LocalTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 
-import com.kwhackathon.broom.carpool.dto.request.IsFullCheckDto;
-import com.kwhackathon.broom.carpool.dto.request.WriteCarpoolBoardDto;
+import com.kwhackathon.broom.team.dto.request.IsFullCheckDto;
+import com.kwhackathon.broom.team.dto.request.WriteTeamBoardDto;
 import com.kwhackathon.broom.user.entity.User;
 
 import jakarta.persistence.Column;
@@ -28,11 +28,11 @@ import lombok.NoArgsConstructor;
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class CarpoolBoard {
+public class TeamBoard {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "carpool_board_id", nullable = false)
-    private Long carpoolBoardId;
+    @Column(name = "team_board_id", nullable = false)
+    private Long teamBoardId;
 
     @Column(name = "title", nullable = false)
     private String title;
@@ -44,11 +44,11 @@ public class CarpoolBoard {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(name = "depart_time", nullable = false)
-    private LocalTime departTime;
+    @Column(name = "meeting_time", nullable = false)
+    private LocalTime meetingTime;
 
-    @Column(name = "depart_place", nullable = false)
-    private String departPlace;
+    @Column(name = "meeting_place", nullable = false)
+    private String meetingPlace;
 
     @Column(name = "personnel", nullable = false)
     private int personnel;
@@ -59,21 +59,17 @@ public class CarpoolBoard {
     @Column(name = "training_date", nullable = false)
     private LocalDate trainingDate;
 
-    @Column(name = "price", nullable = false)
-    private int price;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    public void updateCarpoolBoard(WriteCarpoolBoardDto dto) {
+    public void updateTeamBoard(WriteTeamBoardDto dto) {
         this.title = dto.getTitle();
         this.content = dto.getContent();
         this.trainingDate = dto.getTrainingDate();
-        this.departPlace = dto.getDepartPlace();
-        this.departTime = dto.getDepartTime();
+        this.meetingPlace = dto.getMeetingPlace();
+        this.meetingTime = dto.getMeetingTime();
         this.personnel = dto.getPersonnel();
-        this.price = dto.getPrice();
     }
 
     public void updateIsFull(IsFullCheckDto dto) {

@@ -1,16 +1,16 @@
-package com.kwhackathon.broom.carpool.dto.response;
+package com.kwhackathon.broom.team.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class CarpoolBoardListElement {
-    private Long carpoolBoardId;
+public class TeamBoardListElement {
+    private Long teamBoardId;
     private String title;
     private String createdAt;
     private String trainingDate;
-    private String departPlace;
-    private String departTime;
+    private String meetingPlace;
+    private String meetingTime;
     private boolean isFull;
 }

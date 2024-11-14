@@ -1,5 +1,6 @@
 package com.kwhackathon.broom.user.service;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -8,9 +9,13 @@ import org.springframework.stereotype.Service;
 
 import com.kwhackathon.broom.common.util.JwtUtil;
 import com.kwhackathon.broom.user.dto.request.SignupDto;
+import com.kwhackathon.broom.user.dto.request.UpdatePasswordDto;
+import com.kwhackathon.broom.user.dto.request.UpdateUserInfoDto;
 import com.kwhackathon.broom.user.dto.request.ValidateIdDto;
 import com.kwhackathon.broom.user.dto.request.ValidateNicknameDto;
+import com.kwhackathon.broom.user.dto.response.MypageInfoDto;
 import com.kwhackathon.broom.user.dto.response.TokenDto;
+import com.kwhackathon.broom.user.dto.response.UserInfoDto;
 import com.kwhackathon.broom.user.entity.User;
 import com.kwhackathon.broom.user.repository.UserRepository;
 import com.kwhackathon.broom.user.util.Role;
@@ -101,5 +106,32 @@ public class UserService implements UserDetailsService {
             throw new IllegalArgumentException("유효하지 않은 토큰입니다");
         }
         return refresh;
+    }
+
+    public MypageInfoDto getMypageInfo() {
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = (User) loadUserByUsername(userId);
+        return new MypageInfoDto(user.getNickname(), user.getDischargeYear());
+    }
+
+    public UserInfoDto getUserInfo() {
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = (User) loadUserByUsername(userId);
+        return new UserInfoDto(user.getNickname(), user.getDischargeYear(), user.getMilitaryChaplain());
+    }
+
+    public void updateUserInfo(UpdateUserInfoDto dto) {
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = (User) loadUserByUsername(userId);
+        user.updateUserInfo(dto);
+    }
+
+    public void updatePassword(UpdatePasswordDto dto) {
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = (User) loadUserByUsername(userId);
+        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("기존 비밀번호가 일치하지 않습니다");
+        }
+        user.updatePassword(passwordEncoder.encode(dto.getNewPassword()));
     }
 }

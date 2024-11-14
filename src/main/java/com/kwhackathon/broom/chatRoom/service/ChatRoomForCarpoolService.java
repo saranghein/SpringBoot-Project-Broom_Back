@@ -1,6 +1,8 @@
 package com.kwhackathon.broom.chatRoom.service;
 
 import com.kwhackathon.broom.carpool.entity.CarpoolBoard;
+import com.kwhackathon.broom.chatMessage.dto.ChatMessageForCarpoolDto;
+import com.kwhackathon.broom.chatMessage.entity.ChatMessageForCarpool;
 import com.kwhackathon.broom.chatMessage.repository.ChatMessageForCarpoolRepository;
 import com.kwhackathon.broom.chatRoom.dto.ChatRoomForCarpoolDto;
 import com.kwhackathon.broom.chatRoom.entity.ChatRoomForCarpool;
@@ -8,6 +10,7 @@ import com.kwhackathon.broom.chatRoom.repository.ChatRoomForCarpoolRepository;
 import com.kwhackathon.broom.user.entity.User;
 import com.kwhackathon.broom.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,4 +73,5 @@ public class ChatRoomForCarpoolService {
 
         chatRoomForCarpoolRepository.deleteById(chatRoomId);
     }
+
 }

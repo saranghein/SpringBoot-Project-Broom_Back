@@ -2,9 +2,11 @@ package com.kwhackathon.broom.chatMessage.controller;
 
 import com.kwhackathon.broom.chatMessage.dto.ChatMessageForCarpoolDto;
 import com.kwhackathon.broom.chatMessage.dto.ReadStatusUpdateDto;
+import com.kwhackathon.broom.chatMessage.entity.ChatMessageForCarpool;
 import com.kwhackathon.broom.chatMessage.service.ChatMessageForCarpoolService;
 import com.kwhackathon.broom.chatRoom.service.ChatRoomForCarpoolService;
 import com.kwhackathon.broom.user.entity.User;
+import com.kwhackathon.broom.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -26,6 +28,7 @@ public class ChatMessageForCarpoolController implements ChatMessageForCarpoolOpe
 
     private static final String CHAT_EXCHANGE_NAME = "chat.carpool.exchange";
     private static final String CHAT_QUEUE_NAME = "chat.carpool.queue";
+    private final UserService userService;
 
     // 채팅방 입장
     @MessageMapping("chat.carpool.enter")
@@ -80,6 +83,7 @@ public class ChatMessageForCarpoolController implements ChatMessageForCarpoolOpe
             // 구독 채널에 전송
             chatMessageService.sendMessage(CHAT_EXCHANGE_NAME, "chat.carpool.room." + messageDto.getChatRoomId(), messageDto);
 
+            //chatRoomForCarpoolService.setLastMessage(messageDto.getChatRoomId(), messageDto,userService.loadUserByUsername(messageDto.getSenderId()));
 
     }
 

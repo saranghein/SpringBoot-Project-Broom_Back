@@ -32,8 +32,9 @@ public class ChatMessageForCarpoolService {
     private final ChatMessageForCarpoolRepository chatMessageRepository;
     private final ChatRoomForCarpoolService chatRoomService;
     private final UserService userService;
+    private final ChatRoomForCarpoolService chatRoomForCarpoolService;
 
-public void sendMessage(String exchange, String routingKey, ChatMessageForCarpoolDto.Request messageDto) {
+    public void sendMessage(String exchange, String routingKey, ChatMessageForCarpoolDto.Request messageDto) {
     // chatRoomId를 통해 ChatRoomForCarpool 조회
     ChatRoomForCarpool chatRoom = chatRoomService.findByChatRoomId(messageDto.getChatRoomId());
 
@@ -46,6 +47,9 @@ public void sendMessage(String exchange, String routingKey, ChatMessageForCarpoo
     ChatMessageForCarpool message = messageDto.toEntity(chatRoom,  sender);
     chatMessageRepository.save(message);
     System.out.println("RabbitMQ 전송: Exchange=" + exchange + ", RoutingKey=" + routingKey + ", Content=" + messageDto.getContent());
+    // ChatRoomForCarpool에 마지막 메시지 설정
+    chatRoom.setLastChatMessageForCarpool(message); // 마지막 메시지 엔티티 업데이트
+    chatRoomForCarpoolRepository.save(chatRoom);              // ChatRoomForCarpool 업데이트
 
     // RabbitMQ로 메시지 전송
     rabbitTemplate.convertAndSend(exchange, routingKey, messageDto);

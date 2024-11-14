@@ -1,4 +1,4 @@
-package com.kwhackathon.broom.carpool.dto.response;
+package com.kwhackathon.broom.team.dto.response;
 
 import com.kwhackathon.broom.user.util.MilitaryChaplain;
 

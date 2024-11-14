@@ -4,9 +4,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kwhackathon.broom.user.dto.request.SignupDto;
+import com.kwhackathon.broom.user.dto.request.UpdatePasswordDto;
+import com.kwhackathon.broom.user.dto.request.UpdateUserInfoDto;
 import com.kwhackathon.broom.user.dto.request.ValidateIdDto;
 import com.kwhackathon.broom.user.dto.request.ValidateNicknameDto;
 import com.kwhackathon.broom.user.dto.response.TokenDto;
@@ -80,5 +83,45 @@ public class UserController implements UserOperations {
                 .maxAge(expiry)
                 .sameSite("None")
                 .build();
+    }
+
+    @Override
+    public ResponseEntity<?> getMypageInfo() {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(userService.getMypageInfo());
+        } catch (UsernameNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사용자 정보를 찾을 수 없습니다");
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> getMyInfo() {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(userService.getUserInfo());
+        } catch (UsernameNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사용자 정보를 찾을 수 없습니다");
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> updateUserInfo(UpdateUserInfoDto updateUserInfoDto) {
+        try {
+            userService.updateUserInfo(updateUserInfoDto);
+        } catch (UsernameNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사용자 정보를 찾을 수 없습니다");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body("정보가 변경되었습니다");
+    }
+
+    @Override
+    public ResponseEntity<?> updatePassword(UpdatePasswordDto updatePasswordDto) {
+        try {
+            userService.updatePassword(updatePasswordDto);
+        } catch (UsernameNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사용자 정보를 찾을 수 없습니다");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+        return ResponseEntity.status(HttpStatus.OK).body("비밀번호가 변경되었습니다");
     }
 }

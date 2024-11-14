@@ -71,24 +71,24 @@ public class RabbitConfig {
         return factory;
     }
 
-    // ChatMessageForEarlyDeparture 설정
-    private static final String EARLY_DEPARTURE_QUEUE_NAME = "chat.earlyDeparture.queue";
-    private static final String EARLY_DEPARTURE_EXCHANGE_NAME = "chat.earlyDeparture.exchange";
-    private static final String EARLY_DEPARTURE_ROUTING_KEY = "chat.earlyDeparture.room.*";
+    // ChatMessageForTeam 설정
+    private static final String TEAM_QUEUE_NAME = "chat.team.queue";
+    private static final String TEAM_EXCHANGE_NAME = "chat.team.exchange";
+    private static final String TEAM_ROUTING_KEY = "chat.team.room.*";
 
     @Bean
-    public Queue earlyDepartureQueue() {
-        return new Queue(EARLY_DEPARTURE_QUEUE_NAME, true);
+    public Queue teamQueue() {
+        return new Queue(TEAM_QUEUE_NAME, true);
     }
 
     @Bean
-    public TopicExchange earlyDepartureExchange() {
-        return new TopicExchange(EARLY_DEPARTURE_EXCHANGE_NAME);
+    public TopicExchange teamExchange() {
+        return new TopicExchange(TEAM_EXCHANGE_NAME);
     }
 
     @Bean
-    public Binding earlyDepartureBinding(){
-        return BindingBuilder.bind(earlyDepartureQueue()).to(earlyDepartureExchange()).with(EARLY_DEPARTURE_ROUTING_KEY);
+    public Binding teamBinding(){
+        return BindingBuilder.bind(teamQueue()).to(teamExchange()).with(TEAM_ROUTING_KEY);
     }
 
     @Bean
