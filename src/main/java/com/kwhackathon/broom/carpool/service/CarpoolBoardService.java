@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 import java.util.stream.Collectors;
 
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -281,7 +282,9 @@ public class CarpoolBoardService {
                 carpoolBoard.updateIsFull(dto);
         }
 
+
     public Optional<CarpoolBoard> getCarpoolBoard(Long carpoolBoardId) {
             return carpoolBoardRepository.findById(carpoolBoardId);
     }
+
 }
