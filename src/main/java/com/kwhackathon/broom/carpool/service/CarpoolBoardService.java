@@ -56,7 +56,8 @@ public class CarpoolBoardService {
                                 .map(carpoolBoard -> {
                                         LocalDateTime createdAt = carpoolBoard.getCreatedAt();
                                         String createdAtStr = createdAt
-                                                        .format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
+                                                        .format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+
                                         if (createdAt.toLocalDate().compareTo(LocalDate.now()) == 0) {
                                                 createdAtStr = createdAt.getHour() + ":" + createdAt.getMinute();
                                         }
@@ -173,6 +174,37 @@ public class CarpoolBoardService {
                                         })
                                         .collect(Collectors.toList());
                 }
+                return new CarpoolBoardListDto(elements);
+        }
+
+        public CarpoolBoardListDto getRecruitingBoard() {
+                List<CarpoolBoardListElement> elements = new ArrayList<>();
+                elements = carpoolBoardRepository.findByIsFull(false).stream()
+                                .map(carpoolBoard -> {
+                                        LocalDateTime createdAt = carpoolBoard.getCreatedAt();
+                                        String createdAtStr = createdAt
+                                                        .format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+
+                                        if (carpoolBoard.getCreatedAt().getYear() == LocalDate.now().getYear()) {
+                                                createdAtStr = createdAt.format(DateTimeFormatter.ofPattern("MM/dd"));
+                                        }
+                                        if (createdAt.toLocalDate().compareTo(LocalDate.now()) == 0) {
+                                                createdAtStr = createdAt.getHour() + ":" + createdAt.getMinute();
+                                        }
+                                        return new CarpoolBoardListElement(
+                                                        carpoolBoard.getCarpoolBoardId(),
+                                                        carpoolBoard.getTitle(),
+                                                        createdAtStr,
+                                                        carpoolBoard.getTrainingDate()
+                                                                        .format(DateTimeFormatter.ofPattern(
+                                                                                        "MM/dd")),
+                                                        carpoolBoard.getDepartPlace(),
+                                                        carpoolBoard.getDepartTime().format(DateTimeFormatter.ofPattern(
+                                                                        "HH:mm")),
+                                                        carpoolBoard.isFull());
+                                })
+                                .collect(Collectors.toList());
+
                 return new CarpoolBoardListDto(elements);
         }
 

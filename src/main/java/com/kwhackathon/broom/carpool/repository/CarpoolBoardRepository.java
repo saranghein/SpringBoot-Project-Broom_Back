@@ -14,4 +14,6 @@ public interface CarpoolBoardRepository extends JpaRepository<CarpoolBoard, Long
     List<CarpoolBoard> findByTrainingDate(LocalDate trainingDate);
 
     List<CarpoolBoard> findByDepartPlaceContaining(String departPlace);
+
+    List<CarpoolBoard> findByIsFull(boolean full);
 }
