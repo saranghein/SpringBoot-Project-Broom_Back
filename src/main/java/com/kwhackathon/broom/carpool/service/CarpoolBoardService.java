@@ -58,11 +58,11 @@ public class CarpoolBoardService {
                                         String createdAtStr = createdAt
                                                         .format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
 
-                                        if (createdAt.toLocalDate().compareTo(LocalDate.now()) == 0) {
-                                                createdAtStr = createdAt.getHour() + ":" + createdAt.getMinute();
-                                        }
                                         if (carpoolBoard.getCreatedAt().getYear() == LocalDate.now().getYear()) {
                                                 createdAtStr = createdAt.format(DateTimeFormatter.ofPattern("MM/dd"));
+                                        }
+                                        if (createdAt.toLocalDate().compareTo(LocalDate.now()) == 0) {
+                                                createdAtStr = createdAt.getHour() + ":" + createdAt.getMinute();
                                         }
                                         return new CarpoolBoardListElement(
                                                         carpoolBoard.getCarpoolBoardId(),
