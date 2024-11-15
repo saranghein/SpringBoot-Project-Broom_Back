@@ -52,7 +52,7 @@ public class TeamBoardService {
 
         public TeamBoardListDto getAllBoards() {
                 List<TeamBoardListElement> elements = new ArrayList<>();
-                elements = teamBoardRepository.findAll().stream()
+                elements = teamBoardRepository.findAllOrderByCreatedAtDesc().stream()
                                 .map(teamBoard -> {
                                         LocalDateTime createdAt = teamBoard.getCreatedAt();
                                         String createdAtStr = createdAt
@@ -83,7 +83,7 @@ public class TeamBoardService {
         public TeamBoardListDto searchTeamBoard(String category, String keyword) {
                 List<TeamBoardListElement> elements = new ArrayList<>();
                 if (category.equals("title")) {
-                        elements = teamBoardRepository.findByTitleContaining(keyword).stream()
+                        elements = teamBoardRepository.findByTitleContainingOrderByCreatedAtDesc(keyword).stream()
                                         .map(teamBoard -> {
                                                 LocalDateTime createdAt = teamBoard.getCreatedAt();
                                                 String createdAtStr = createdAt.format(
@@ -113,7 +113,7 @@ public class TeamBoardService {
                                         .collect(Collectors.toList());
                 }
                 if (category.equals("trainingDate")) {
-                        elements = teamBoardRepository.findByTrainingDate(LocalDate.parse(keyword)).stream()
+                        elements = teamBoardRepository.findByTrainingDateOrderByCreatedAtDesc(LocalDate.parse(keyword)).stream()
                                         .map(teamBoard -> {
                                                 LocalDateTime createdAt = teamBoard.getCreatedAt();
                                                 String createdAtStr = createdAt.format(
@@ -173,8 +173,10 @@ public class TeamBoardService {
         }
         public TeamBoardListDto getRecruitingBoard() {
                 List<TeamBoardListElement> elements = new ArrayList<>();
-                elements = teamBoardRepository.findByIsFull(false).stream()
+                elements = teamBoardRepository.findByIsFullOrderByCreatedAtDesc(false).stream()
                                 .map(teamBoard -> {
+                                        System.out.println("====");
+                                        System.out.println(teamBoard.getCreatedAt());
                                         LocalDateTime createdAt = teamBoard.getCreatedAt();
                                         String createdAtStr = createdAt
                                                         .format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
