@@ -35,6 +35,11 @@ public class CarpoolBoardController implements CarpoolBoardOperations {
     }
 
     @Override
+    public ResponseEntity<?> getRecruitingBoard() {
+        return ResponseEntity.status(HttpStatus.OK).body(carpoolBoardService.getRecruitingBoard());
+    }
+
+    @Override
     public ResponseEntity<?> createBoard(WriteCarpoolBoardDto writeCarpoolBoardDto) {
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(carpoolBoardService.createCarpoolBoard(writeCarpoolBoardDto));

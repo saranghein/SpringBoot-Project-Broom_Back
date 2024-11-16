@@ -58,5 +58,12 @@ public class ChatRoomForCarpool {
     @Column(name="is_read_by_participant",nullable = false)
     private boolean isReadByParticipant;
 
+    // 작성자와 참여자의 안 읽은 메시지 수 필드 추가
+    @Column(name = "unread_message_count_for_author", nullable = false)
+    private int unreadMessageCountForAuthor = 0;
+
+    @Column(name = "unread_message_count_for_participant", nullable = false)
+    private int unreadMessageCountForParticipant = 0;
+
 
 }

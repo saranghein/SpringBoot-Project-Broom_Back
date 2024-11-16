@@ -35,6 +35,11 @@ public class TeamBoardController implements TeamBoardOperations{
     }
 
     @Override
+    public ResponseEntity<?> getRecruitingBoard() {
+        return ResponseEntity.status(HttpStatus.OK).body(teamBoardService.getRecruitingBoard());
+    }
+
+    @Override
     public ResponseEntity<?> createBoard(WriteTeamBoardDto writeTeamBoardDto) {
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(teamBoardService.createTeamBoard(writeTeamBoardDto));

@@ -1,11 +1,13 @@
 package com.kwhackathon.broom.chatMessage.controller;
 
 import com.kwhackathon.broom.chatMessage.dto.ChatMessageForTeamDto;
+import com.kwhackathon.broom.chatMessage.dto.ChatRoomForTeamDetailsDto;
 import com.kwhackathon.broom.chatMessage.dto.ReadStatusUpdateDto;
 import com.kwhackathon.broom.chatMessage.service.ChatMessageForTeamService;
 import com.kwhackathon.broom.chatRoom.service.ChatRoomForTeamService;
 import com.kwhackathon.broom.user.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,6 +21,7 @@ public class ChatMessageForTeamController implements ChatMessageForTeamOperation
 
     private static final String CHAT_EXCHANGE_NAME = "chat.team.exchange";
     private static final String CHAT_QUEUE_NAME = "chat.team.queue";
+
     @Override
     public void enterUser(ChatMessageForTeamDto.Request messageDto, User user) {
         // user id, sender id 확인
@@ -65,8 +68,18 @@ public class ChatMessageForTeamController implements ChatMessageForTeamOperation
 //    }
 
     @Override
-    public void updateReadStatus(ReadStatusUpdateDto.Request readStatusUpdate, String chatRoomId, String userId) {
+    public void updateReadStatus(ReadStatusUpdateDto.Request readStatusUpdate, String roomId, String userId) {
 //TODO: 읽으면 되긴하는데 다시 안 읽으면 false로 교체하는 로직 필요
-        chatMessageService.updateReadStatus(chatRoomId, readStatusUpdate.getUserId());
+        chatMessageService.updateReadStatus(roomId, readStatusUpdate.getUserId());
+    }
+
+    @Override
+    public ResponseEntity<?> listChatMessages(String roomId, User user) {
+        try{
+            ChatRoomForTeamDetailsDto response = chatMessageService.getChatRoomDetails(roomId, user.getUserId());
+            return ResponseEntity.ok(response);
+        }catch (Exception e) {
+            return ResponseEntity.badRequest().body("채팅방 정보를 갖고오는데 실패했습니다.");
+        }
     }
 }

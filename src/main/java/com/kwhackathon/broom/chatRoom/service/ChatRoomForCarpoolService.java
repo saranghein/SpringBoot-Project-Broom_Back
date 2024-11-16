@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 public class ChatRoomForCarpoolService {
     private final ChatRoomForCarpoolRepository chatRoomForCarpoolRepository;
     private final ChatMessageForCarpoolRepository chatMessageForCarpoolRepository;
-    private final UserService userService;
 
     // 채팅방 목록 조회
     public List<ChatRoomForCarpoolDto.ResponseForGetChatRoomList> getChatRoomList(User participant) {
@@ -48,10 +47,10 @@ public class ChatRoomForCarpoolService {
         Optional<ChatRoomForCarpool> room = chatRoomForCarpoolRepository.findByCarpoolBoardAndAuthorAndParticipant(carpoolBoard, author, participant);
         return room
                 .map(chatRoom -> ChatRoomForCarpoolDto.ResponseForGetChatRoomList.fromEntity(chatRoom, participant))
-                .orElse(null);
+                .orElseThrow(() -> new NullPointerException("채팅방을 찾을 수 없습니다"));
+
 
     }
-
 
     // 채팅방 생성 또는 기존 방 ID 반환
     @Transactional
@@ -59,14 +58,15 @@ public class ChatRoomForCarpoolService {
         Optional<ChatRoomForCarpool> existingRoom = chatRoomForCarpoolRepository.findByCarpoolBoardAndAuthorAndParticipant(carpoolBoard, author, participant);
 
         return existingRoom
-                .map(chatRoom -> ChatRoomForCarpoolDto.ResponseForCreateChatRoomList.fromEntity(chatRoom, participant))
+                .map(chatRoom -> ChatRoomForCarpoolDto.ResponseForCreateChatRoomList.fromEntity(chatRoom))
                 .orElseGet(() -> {
                     ChatRoomForCarpool newRoom = ChatRoomForCarpoolDto.ResponseForCreateChatRoomList.toEntity(author, participant, carpoolBoard);
                     chatRoomForCarpoolRepository.save(newRoom);
-                    return ChatRoomForCarpoolDto.ResponseForCreateChatRoomList.fromEntity(newRoom, participant);
+                    return ChatRoomForCarpoolDto.ResponseForCreateChatRoomList.fromEntity(newRoom);
                 });
 
     }
+
     @Transactional
     public void deleteChatRoom(String chatRoomId) {
         chatMessageForCarpoolRepository.deleteByChatRoomId(chatRoomId);

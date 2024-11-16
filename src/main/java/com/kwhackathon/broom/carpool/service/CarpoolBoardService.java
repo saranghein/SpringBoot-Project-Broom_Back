@@ -57,12 +57,13 @@ public class CarpoolBoardService {
                                 .map(carpoolBoard -> {
                                         LocalDateTime createdAt = carpoolBoard.getCreatedAt();
                                         String createdAtStr = createdAt
-                                                        .format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
-                                        if (createdAt.toLocalDate().compareTo(LocalDate.now()) == 0) {
-                                                createdAtStr = createdAt.getHour() + ":" + createdAt.getMinute();
-                                        }
+                                                        .format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+
                                         if (carpoolBoard.getCreatedAt().getYear() == LocalDate.now().getYear()) {
                                                 createdAtStr = createdAt.format(DateTimeFormatter.ofPattern("MM/dd"));
+                                        }
+                                        if (createdAt.toLocalDate().compareTo(LocalDate.now()) == 0) {
+                                                createdAtStr = createdAt.getHour() + ":" + createdAt.getMinute();
                                         }
                                         return new CarpoolBoardListElement(
                                                         carpoolBoard.getCarpoolBoardId(),
@@ -177,6 +178,37 @@ public class CarpoolBoardService {
                 return new CarpoolBoardListDto(elements);
         }
 
+        public CarpoolBoardListDto getRecruitingBoard() {
+                List<CarpoolBoardListElement> elements = new ArrayList<>();
+                elements = carpoolBoardRepository.findByIsFull(false).stream()
+                                .map(carpoolBoard -> {
+                                        LocalDateTime createdAt = carpoolBoard.getCreatedAt();
+                                        String createdAtStr = createdAt
+                                                        .format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+
+                                        if (carpoolBoard.getCreatedAt().getYear() == LocalDate.now().getYear()) {
+                                                createdAtStr = createdAt.format(DateTimeFormatter.ofPattern("MM/dd"));
+                                        }
+                                        if (createdAt.toLocalDate().compareTo(LocalDate.now()) == 0) {
+                                                createdAtStr = createdAt.getHour() + ":" + createdAt.getMinute();
+                                        }
+                                        return new CarpoolBoardListElement(
+                                                        carpoolBoard.getCarpoolBoardId(),
+                                                        carpoolBoard.getTitle(),
+                                                        createdAtStr,
+                                                        carpoolBoard.getTrainingDate()
+                                                                        .format(DateTimeFormatter.ofPattern(
+                                                                                        "MM/dd")),
+                                                        carpoolBoard.getDepartPlace(),
+                                                        carpoolBoard.getDepartTime().format(DateTimeFormatter.ofPattern(
+                                                                        "HH:mm")),
+                                                        carpoolBoard.isFull());
+                                })
+                                .collect(Collectors.toList());
+
+                return new CarpoolBoardListDto(elements);
+        }
+
         public SingleCarpoolBoardDto getSingleCarpoolBoard(Long carpoolBoardId) {
                 CarpoolBoard carpoolBoard = carpoolBoardRepository.findById(carpoolBoardId)
                                 .orElseThrow(() -> new NullPointerException("게시물을 찾을 수 없습니다"));
@@ -280,8 +312,7 @@ public class CarpoolBoardService {
                                 .orElseThrow(() -> new NullPointerException("게시물을 찾을 수 없습니다"));
                 carpoolBoard.updateIsFull(dto);
         }
-
     public Optional<CarpoolBoard> getCarpoolBoard(Long carpoolBoardId) {
-            return carpoolBoardRepository.findById(carpoolBoardId);
+        return carpoolBoardRepository.findById(carpoolBoardId);
     }
 }

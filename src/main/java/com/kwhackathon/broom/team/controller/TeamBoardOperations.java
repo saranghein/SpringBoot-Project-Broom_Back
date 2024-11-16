@@ -22,6 +22,9 @@ public interface TeamBoardOperations {
     @GetMapping("/view/team/{teamBoardId}")
     ResponseEntity<?> viewBoardDetail(@PathVariable Long teamBoardId);
 
+    @GetMapping("/view/team/recruiting")
+    ResponseEntity<?> getRecruitingBoard();
+
     @PostMapping("/team")
     ResponseEntity<?> createBoard(@RequestBody WriteTeamBoardDto writeTeamBoardDto);
 

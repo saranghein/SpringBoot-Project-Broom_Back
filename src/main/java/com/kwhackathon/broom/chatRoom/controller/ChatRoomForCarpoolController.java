@@ -3,6 +3,7 @@ package com.kwhackathon.broom.chatRoom.controller;
 import com.kwhackathon.broom.carpool.entity.CarpoolBoard;
 import com.kwhackathon.broom.carpool.service.CarpoolBoardService;
 import com.kwhackathon.broom.chatRoom.dto.ChatRoomForCarpoolDto;
+import com.kwhackathon.broom.chatRoom.dto.ChatRoomListForCarpoolDto;
 import com.kwhackathon.broom.chatRoom.service.ChatRoomForCarpoolService;
 import com.kwhackathon.broom.user.entity.User;
 import com.kwhackathon.broom.user.service.UserService;
@@ -19,50 +20,29 @@ import java.util.Optional;
 @RequestMapping("carpool/chat/room")
 @RequiredArgsConstructor
 public class ChatRoomForCarpoolController implements ChatRoomForCarpoolOperation {
+
     private final ChatRoomForCarpoolService chatRoomForCarpoolService;
-
     private final CarpoolBoardService carpoolBoardService;
-
-    private final UserService userService;
-    //private final ChatRoomForCarpoolService chatRoomForCarpoolService;
 
     // 로그인 유저가 참여 중인 채팅방 목록 조회
     @Override
-    public ResponseEntity<?> getChatRoomList(@AuthenticationPrincipal User participant) {
+    public ResponseEntity<?> getChatRoomList(User participant) {
         try {
             List<ChatRoomForCarpoolDto.ResponseForGetChatRoomList> chatRoomList = chatRoomForCarpoolService.getChatRoomList(participant);
-            return ResponseEntity.ok(chatRoomList);
+            ChatRoomListForCarpoolDto.Response response = new ChatRoomListForCarpoolDto.Response(chatRoomList);
+
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("채팅방 목록 조회에 실패했습니다.");
         }
 
     }
 
-    // 해당 게시판, 로그인 유저의 채팅 목록 반환
-    @Override
-    public ResponseEntity<?> getChatRoom(
-            @PathVariable Long carpoolBoardId,
-            @AuthenticationPrincipal User participant) {
-        try {
-            // CarpoolBoard에서 게시물 작성자(author) 가져오기
-            Optional<CarpoolBoard> carpoolBoard  = carpoolBoardService.getCarpoolBoard(carpoolBoardId);
-            User author = carpoolBoard.get().getUser(); // CarpoolBoard에 저장된 작성자
-
-            // 채팅방 조회 및 DTO 변환
-            ChatRoomForCarpoolDto.ResponseForGetChatRoomList chatRoom = chatRoomForCarpoolService.getChatRoom(carpoolBoard, author, participant);
-
-            //ChatRoomForCarpoolDto.Response chatRoomDto = ChatRoomForCarpoolDto.Response.fromEntity(chatRoom, participant);
-            return ResponseEntity.ok(chatRoom);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("채팅방 조회에 실패했습니다.");
-        }
-    }
-
     // 채팅방 생성 또는 기존 채팅방 ID 반환
     @Override
     public ResponseEntity<?> createChatRoom(
-            @PathVariable Long carpoolBoardId,
-            @AuthenticationPrincipal User participant) {
+             Long carpoolBoardId,
+             User participant) {
         try {
             // CarpoolBoard에서 게시물 작성자(author) 가져오기
             Optional<CarpoolBoard> carpoolBoard  = carpoolBoardService.getCarpoolBoard(carpoolBoardId);

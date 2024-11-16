@@ -9,7 +9,7 @@ import org.springframework.data.annotation.CreatedDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "chat_message_for_carpool")
+@Table(name = "ChatMessageForCarpool")
 @Data
 public class ChatMessageForCarpool {
     @Id

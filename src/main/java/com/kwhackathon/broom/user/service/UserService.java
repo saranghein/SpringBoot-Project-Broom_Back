@@ -1,5 +1,7 @@
 package com.kwhackathon.broom.user.service;
 
+import java.time.LocalDate;
+
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -111,7 +113,8 @@ public class UserService implements UserDetailsService {
     public MypageInfoDto getMypageInfo() {
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = (User) loadUserByUsername(userId);
-        return new MypageInfoDto(user.getNickname(), user.getDischargeYear());
+        int reserveYear = LocalDate.now().getYear() - user.getDischargeYear();
+        return new MypageInfoDto(user.getNickname(), reserveYear);
     }
 
     public UserInfoDto getUserInfo() {
