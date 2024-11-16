@@ -1,6 +1,7 @@
 package com.kwhackathon.broom.chatMessage.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.kwhackathon.broom.chatMessage.entity.ChatMessageForCarpool;
 import com.kwhackathon.broom.chatMessage.entity.ChatMessageForTeam;
 import com.kwhackathon.broom.chatRoom.entity.ChatRoomForTeam;
 import com.kwhackathon.broom.user.entity.User;
@@ -48,5 +49,21 @@ public class ChatMessageForTeamDto {
             return response;
         }
 
+    }
+    @Data
+    public static class ResponseForDetail{
+        private String senderName;  // 발신자 닉네임
+        private String content;         // 메시지 내용
+
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
+        private LocalDateTime createdAt; // 메시지 생성 시간
+
+        public static ChatMessageForTeamDto.ResponseForDetail fromEntity(ChatMessageForTeam message) {
+            ChatMessageForTeamDto.ResponseForDetail response = new ChatMessageForTeamDto.ResponseForDetail();
+            response.senderName = message.getSender().getNickname();
+            response.content = message.getMessage();
+            response.createdAt = message.getCreatedAt();
+            return response;
+        }
     }
 }

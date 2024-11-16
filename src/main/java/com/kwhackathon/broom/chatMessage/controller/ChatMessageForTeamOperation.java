@@ -3,11 +3,14 @@ package com.kwhackathon.broom.chatMessage.controller;
 import com.kwhackathon.broom.chatMessage.dto.ChatMessageForTeamDto;
 import com.kwhackathon.broom.chatMessage.dto.ReadStatusUpdateDto;
 import com.kwhackathon.broom.user.entity.User;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 public interface ChatMessageForTeamOperation {
     // 채팅방 입장
@@ -24,7 +27,12 @@ public interface ChatMessageForTeamOperation {
 //            @PathVariable String chatRoomId,
 //            @RequestBody ChatMessageForEarlyDepartureDto.Request messageDto);
 
-    @MessageMapping("chat.team.read.{chatRoomId}")
-    void updateReadStatus(@Payload ReadStatusUpdateDto.Request readStatusUpdate, @DestinationVariable String chatRoomId, @AuthenticationPrincipal String userId);
+    @MessageMapping("chat.team.read.{roomId}")
+    void updateReadStatus(@Payload ReadStatusUpdateDto.Request readStatusUpdate, @DestinationVariable String roomId, @AuthenticationPrincipal String userId);
 
+    @GetMapping("/team/chat/list/{roomId}")
+    ResponseEntity<?> listChatMessages(
+            @PathVariable String roomId,
+            @AuthenticationPrincipal User user
+    );
 }

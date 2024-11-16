@@ -13,12 +13,6 @@ public interface ChatRoomForCarpoolOperation {
     @GetMapping("/list")
     ResponseEntity<?> getChatRoomList(@AuthenticationPrincipal User participant);
 
-    // 해당 게시판, 로그인 유저의 채팅 목록 반환
-    @GetMapping("/list/{carpoolBoardId}")
-    ResponseEntity<?> getChatRoom(
-            @PathVariable Long carpoolBoardId,
-            @AuthenticationPrincipal User participant);
-
     // 채팅방 생성 또는 기존 채팅방 ID 반환
     @PostMapping("/create/{carpoolBoardId}")
     ResponseEntity<?> createChatRoom(

@@ -1,6 +1,9 @@
 package com.kwhackathon.broom.chatRoom.controller;
 
+import com.kwhackathon.broom.chatRoom.dto.ChatRoomForCarpoolDto;
 import com.kwhackathon.broom.chatRoom.dto.ChatRoomForTeamDto;
+import com.kwhackathon.broom.chatRoom.dto.ChatRoomListForCarpoolDto;
+import com.kwhackathon.broom.chatRoom.dto.ChatRoomListForTeamDto;
 import com.kwhackathon.broom.chatRoom.service.ChatRoomForTeamService;
 import com.kwhackathon.broom.team.entity.TeamBoard;
 import com.kwhackathon.broom.team.service.TeamBoardService;
@@ -27,26 +30,13 @@ public class ChatRoomForTeamController implements ChatRoomForTeamOperation {
     public ResponseEntity<?> getChatRoomList(User participant) {
         try {
             List<ChatRoomForTeamDto.ResponseForGetChatRoomList> chatRoomList = chatRoomForTeamService.getChatRoomList(participant);
-            return ResponseEntity.ok(chatRoomList);
+            ChatRoomListForTeamDto.Response response = new ChatRoomListForTeamDto.Response(chatRoomList);
+
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("채팅방 목록 조회에 실패했습니다.");
         }    }
 
-    @Override
-    public ResponseEntity<?> getChatRoom(Long teamBoardId, User participant) {
-        try {
-            // CarpoolBoard에서 게시물 작성자(author) 가져오기
-            Optional<TeamBoard> teamBoard  = teamBoardService.getTeamBoard(teamBoardId);
-            User author = teamBoard.get().getUser(); // CarpoolBoard에 저장된 작성자
-
-            // 채팅방 조회 및 DTO 변환
-            ChatRoomForTeamDto.ResponseForGetChatRoomList chatRoom = chatRoomForTeamService.getChatRoom(teamBoard, author, participant);
-
-            //ChatRoomForCarpoolDto.Response chatRoomDto = ChatRoomForCarpoolDto.Response.fromEntity(chatRoom, participant);
-            return ResponseEntity.ok(chatRoom);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("채팅방 조회에 실패했습니다.");
-        }    }
 
     @Override
     public ResponseEntity<?> createChatRoom(Long teamBoardId, User participant) {

@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import com.kwhackathon.broom.carpool.dto.response.BoardIdDto;
+import com.kwhackathon.broom.team.dto.response.BoardIdDto;
 import com.kwhackathon.broom.team.dto.request.IsFullCheckDto;
 import com.kwhackathon.broom.team.dto.request.WriteTeamBoardDto;
 import com.kwhackathon.broom.team.dto.response.Author;
@@ -88,14 +88,15 @@ public class TeamBoardService {
                                         .map(teamBoard -> {
                                                 LocalDateTime createdAt = teamBoard.getCreatedAt();
                                                 String createdAtStr = createdAt.format(
-                                                                DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
-                                                if (createdAt.toLocalDate().compareTo(LocalDate.now()) == 0) {
-                                                        createdAtStr = createdAt.getHour() + ":"
-                                                                        + createdAt.getMinute();
-                                                }
+                                                                DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+
                                                 if (teamBoard.getCreatedAt().getYear() == LocalDate.now().getYear()) {
                                                         createdAtStr = createdAt
                                                                         .format(DateTimeFormatter.ofPattern("MM/dd"));
+                                                }
+                                                if (createdAt.toLocalDate().compareTo(LocalDate.now()) == 0) {
+                                                        createdAtStr = createdAt.getHour() + ":"
+                                                                        + createdAt.getMinute();
                                                 }
                                                 return new TeamBoardListElement(
                                                                 teamBoard.getTeamBoardId(),
@@ -151,7 +152,8 @@ public class TeamBoardService {
                                 .orElseThrow(() -> new NullPointerException("해당 게시물의 작성자가 유효하지 않습니다"));
 
                 int reserveYear = LocalDate.now().getYear() - writer.getDischargeYear();
-                Author author = new Author(writer.getUserId(), writer.getNickname(), reserveYear, writer.getMilitaryChaplain());
+                Author author = new Author(writer.getUserId(), writer.getNickname(), reserveYear,
+                                writer.getMilitaryChaplain());
 
                 LocalDateTime createdAt = teamBoard.getCreatedAt();
                 String createdAtStr = createdAt.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
@@ -169,6 +171,37 @@ public class TeamBoardService {
                                 teamBoard.getPersonnel(),
                                 teamBoard.getContent(),
                                 teamBoard.isFull());
+        }
+        public TeamBoardListDto getRecruitingBoard() {
+                List<TeamBoardListElement> elements = new ArrayList<>();
+                elements = teamBoardRepository.findByIsFull(false).stream()
+                                .map(teamBoard -> {
+                                        LocalDateTime createdAt = teamBoard.getCreatedAt();
+                                        String createdAtStr = createdAt
+                                                        .format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+
+                                        if (teamBoard.getCreatedAt().getYear() == LocalDate.now().getYear()) {
+                                                createdAtStr = createdAt.format(DateTimeFormatter.ofPattern("MM/dd"));
+                                        }
+                                        if (createdAt.toLocalDate().compareTo(LocalDate.now()) == 0) {
+                                                createdAtStr = createdAt.getHour() + ":" + createdAt.getMinute();
+                                        }
+                                        return new TeamBoardListElement(
+                                                        teamBoard.getTeamBoardId(),
+                                                        teamBoard.getTitle(),
+                                                        createdAtStr,
+                                                        teamBoard.getTrainingDate()
+                                                                        .format(DateTimeFormatter.ofPattern(
+                                                                                        "MM/dd")),
+                                                        teamBoard.getMeetingPlace(),
+                                                        teamBoard.getMeetingTime()
+                                                                        .format(DateTimeFormatter.ofPattern(
+                                                                                        "HH:mm")),
+                                                        teamBoard.isFull());
+                                })
+                                .collect(Collectors.toList());
+
+                return new TeamBoardListDto(elements);
         }
 
         public TeamBoardPreviousInfoDto getPreviousTeamBoard(Long teamBoardId) {
@@ -242,7 +275,6 @@ public class TeamBoardService {
                                 .orElseThrow(() -> new NullPointerException("게시물을 찾을 수 없습니다"));
                 teamBoard.updateIsFull(dto);
         }
-
     public Optional<TeamBoard> getTeamBoard(Long teamBoardId) {
         return teamBoardRepository.findById(teamBoardId);
 

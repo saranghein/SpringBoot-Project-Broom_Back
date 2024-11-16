@@ -1,8 +1,10 @@
 package com.kwhackathon.broom.chatMessage.service;
 
-import com.kwhackathon.broom.chatMessage.dto.ChatMessageForTeamDto;
-import com.kwhackathon.broom.chatMessage.dto.ReadStatusUpdateDto;
+import com.kwhackathon.broom.chatMessage.dto.*;
+import com.kwhackathon.broom.chatMessage.entity.ChatMessageForCarpool;
+import com.kwhackathon.broom.chatMessage.entity.ChatMessageForTeam;
 import com.kwhackathon.broom.chatMessage.repository.ChatMessageForTeamRepository;
+import com.kwhackathon.broom.chatRoom.entity.ChatRoomForCarpool;
 import com.kwhackathon.broom.chatRoom.entity.ChatRoomForTeam;
 import com.kwhackathon.broom.chatRoom.repository.ChatRoomForTeamRepository;
 import com.kwhackathon.broom.chatRoom.service.ChatRoomForTeamService;
@@ -15,6 +17,10 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -79,11 +85,51 @@ public class ChatMessageForTeamService {
             sendReadStatusUpdateMessage(chatRoomId, readStatusUpdate);
         }
     }
+
     // WebSocket 메시지 전송 메서드
     private void sendReadStatusUpdateMessage(String chatRoomId, ReadStatusUpdateDto readStatusUpdate) {
         // RabbitMQ는 비동기 이므로
         // 실시간 반영을 위해 WebSocket template으로 전송
         messagingTemplate.convertAndSend("chat.team.room." + chatRoomId, readStatusUpdate);
+    }
+
+    public List<ChatMessageForTeam> findPreviousMessages(String chatRoomId) {
+        return chatMessageForTeamRepository.findByChatRoomIdOrderByCreatedAtAsc(chatRoomId);
+    }
+
+    public ChatRoomForTeamDetailsDto getChatRoomDetails(String chatRoomId, String currentUserId) {
+        // 현재 유저 정보
+        User currentUser = (User) userService.loadUserByUsername(currentUserId);
+
+        // 채팅방 정보
+        ChatRoomForTeam chatRoom = chatRoomService.findByChatRoomId(chatRoomId);
+
+        // 상대방 정보 가져오기
+        User opponent = chatRoom.getAuthor().getUserId().equals(currentUser.getUserId())
+                ? chatRoom.getParticipant() // 상대방이 참여자인 경우
+                : chatRoom.getAuthor();     // 상대방이 작성자인 경우
+
+        // 이전 메시지 가져오기
+        List<ChatMessageForTeam> previousMessages = findPreviousMessages(chatRoomId);
+        List<ChatMessageForTeamDto.ResponseForDetail> previousMessagesDto = previousMessages.stream()
+                .map(ChatMessageForTeamDto.ResponseForDetail::fromEntity)
+                .collect(Collectors.toList());
+
+        // 전역 몇 년 차인지 계산
+        int currentYear = LocalDate.now().getYear();
+        int yearsSinceDischarge = currentYear - currentUser.getDischargeYear();
+
+        //육군, 해군, ...
+        String militaryChaplain=  opponent.getMilitaryChaplain().toString();
+
+        // DTO 반환
+        return new ChatRoomForTeamDetailsDto(
+                chatRoom.getTeamBoard().getTitle(),
+                opponent.getNickname(),
+                yearsSinceDischarge,
+                militaryChaplain,
+                previousMessagesDto
+        );
     }
 
 }

@@ -1,5 +1,6 @@
 HELP.md
 .gradle
+.idea
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
@@ -21,6 +22,7 @@ bin/
 !**/src/test/**/bin/
 application.yml
 application-local.yml
+application-prod.yml
 application.properties
 .DS_Store
 
@@ -32,6 +34,7 @@ application.properties
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+application-prod.yml
 application.properties
 .DS_Store
 
@@ -42,9 +45,11 @@ application.properties
 /nbdist/
 /.nb-gradle/
 application.properties
+application-prod.yml
 .DS_Store
 
 ### VS Code ###
 .vscode/
 application.properties
+application-prod.yml
 .DS_Store

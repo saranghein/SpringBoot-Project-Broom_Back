@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class BoardIdDto {
-    private Long boardId;
+    private Long teamBoardId;
 }

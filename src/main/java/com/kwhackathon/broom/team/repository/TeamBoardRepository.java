@@ -11,4 +11,6 @@ public interface TeamBoardRepository extends JpaRepository<TeamBoard, Long> {
     List<TeamBoard> findByTitleContaining(String title);
 
     List<TeamBoard> findByTrainingDate(LocalDate trainingDate);
+
+    List<TeamBoard> findByIsFull(boolean full);
 }

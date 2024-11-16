@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 public class ChatRoomForTeamService {
     private final ChatRoomForTeamRepository chatRoomForTeamRepository;
     private final ChatMessageForTeamRepository chatMessageForTeamRepository;
-    private final UserService userService;
 
     // 채팅방 목록 조회
     public List<ChatRoomForTeamDto.ResponseForGetChatRoomList> getChatRoomList(User participant) {
@@ -40,15 +39,12 @@ public class ChatRoomForTeamService {
         if (participant == null) {
             throw new IllegalArgumentException("Participant cannot be null.");
         }
-//        return chatRoomForCarpoolRepository.findByCarpoolBoardAndAuthorAndParticipant(carpoolBoard, author, participant)
-//                .orElse(null);
         Optional<ChatRoomForTeam> room = chatRoomForTeamRepository.findByTeamBoardAndAuthorAndParticipant(teamBoard, author, participant);
         return room
                 .map(chatRoom -> ChatRoomForTeamDto.ResponseForGetChatRoomList.fromEntity(chatRoom, participant))
-                .orElse(null);
+                .orElseThrow(() -> new NullPointerException("채팅방을 찾을 수 없습니다"));
 
     }
-
 
     // 채팅방 생성 또는 기존 방 ID 반환
     @Transactional
@@ -56,14 +52,15 @@ public class ChatRoomForTeamService {
         Optional<ChatRoomForTeam> existingRoom = chatRoomForTeamRepository.findByTeamBoardAndAuthorAndParticipant(teamBoard, author, participant);
 
         return existingRoom
-                .map(chatRoom -> ChatRoomForTeamDto.ResponseForCreateChatRoomList.fromEntity(chatRoom, participant))
+                .map(chatRoom -> ChatRoomForTeamDto.ResponseForCreateChatRoomList.fromEntity(chatRoom))
                 .orElseGet(() -> {
                     ChatRoomForTeam newRoom = ChatRoomForTeamDto.ResponseForCreateChatRoomList.toEntity(author, participant, teamBoard);
                     chatRoomForTeamRepository.save(newRoom);
-                    return ChatRoomForTeamDto.ResponseForCreateChatRoomList.fromEntity(newRoom, participant);
+                    return ChatRoomForTeamDto.ResponseForCreateChatRoomList.fromEntity(newRoom);
                 });
 
     }
+
     @Transactional
     public void deleteChatRoom(String chatRoomId) {
         chatMessageForTeamRepository.deleteByChatRoomId(chatRoomId);

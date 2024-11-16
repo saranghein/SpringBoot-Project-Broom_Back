@@ -22,6 +22,9 @@ public interface CarpoolBoardOperations {
     @GetMapping("/view/carpool/{carpoolBoardId}")
     ResponseEntity<?> viewBoardDetail(@PathVariable Long carpoolBoardId);
 
+    @GetMapping("/view/carpool/recruiting")
+    ResponseEntity<?> getRecruitingBoard();
+
     @PostMapping("/carpool")
     ResponseEntity<?> createBoard(@RequestBody WriteCarpoolBoardDto writeCarpoolBoardDto);
 

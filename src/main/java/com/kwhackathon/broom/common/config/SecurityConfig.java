@@ -47,7 +47,7 @@ public class SecurityConfig {
                 .httpBasic((httpBasic) -> httpBasic.disable())
                 .authorizeHttpRequests((authorizeRequest) -> authorizeRequest
                         .requestMatchers("/", "/login", "/signup", "/validate-id", "/validate-nickname",
-                                        "/reissue", "/exit","ws://localhost:8080/chat","/**")
+                                        "/reissue", "/exit", "/view/**", "/bus/**")
                         .permitAll()
                         .anyRequest().authenticated())
                 .addFilterAt(
