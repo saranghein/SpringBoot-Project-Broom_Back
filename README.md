@@ -52,9 +52,11 @@
 
 ## ERDiagram
 
+<img width="913" alt="erd" src="https://github.com/user-attachments/assets/0f4b2d15-ffb2-46a3-998c-0d6084ca2098">
 
 
 ## Service Architecture
 
+<img width="936" alt="service_architecture" src="https://github.com/user-attachments/assets/11489866-fd1c-4b81-a8d7-a85fcaec8a7b">
 
 
