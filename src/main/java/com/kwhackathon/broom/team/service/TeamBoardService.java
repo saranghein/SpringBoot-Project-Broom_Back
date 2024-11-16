@@ -5,6 +5,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+
+import java.util.Optional;
+
 import java.util.stream.Collectors;
 
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -276,4 +279,8 @@ public class TeamBoardService {
                                 .orElseThrow(() -> new NullPointerException("게시물을 찾을 수 없습니다"));
                 teamBoard.updateIsFull(dto);
         }
+    public Optional<TeamBoard> getTeamBoard(Long teamBoardId) {
+        return teamBoardRepository.findById(teamBoardId);
+
+    }
 }
