@@ -53,8 +53,11 @@ public class UserService implements UserDetailsService {
         return userRepository.existsByNickname(dto.getNickname());
     }
     
-    public TokenDto reissue(Cookie[] cookies) {
-        String refreshToken = validateRefresh(cookies);
+    public TokenDto reissue(/*Cookie[] cookies*/String refresh) {
+        // String refreshToken = validateRefresh(cookies);
+        // String refreshToken = validateRefresh(refresh);
+
+        String refreshToken = refresh.split(" ")[1];
 
         String userId = jwtUtil.getUserId(refreshToken);
         String role = jwtUtil.getRole(refreshToken);
