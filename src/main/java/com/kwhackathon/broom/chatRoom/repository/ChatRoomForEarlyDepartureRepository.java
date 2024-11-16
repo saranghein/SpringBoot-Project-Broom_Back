@@ -1,8 +1,5 @@
 package com.kwhackathon.broom.chatRoom.repository;
 
-import com.kwhackathon.broom.carpool.entity.CarpoolBoard;
-import com.kwhackathon.broom.chatRoom.entity.ChatRoomForCarpool;
-import com.kwhackathon.broom.chatRoom.entity.ChatRoomForEarlyDeparture;
 import com.kwhackathon.broom.earlyDepartureBoard.entity.EarlyDepartureBoard;
 import com.kwhackathon.broom.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
