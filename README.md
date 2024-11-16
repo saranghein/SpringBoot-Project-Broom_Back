@@ -27,7 +27,7 @@
 
 ### Cooperation
 
-<img src="https://img.shields.io/badge/Git-F05032?style=flat&logo=Git&logoColor=white"/> <img src="https://img.shields.io/badge/Github-222222?style=flat&logo=Github&logoColor=white"/><img src="https://img.shields.io/badge/Notion-000000?style=flat&logo=notion&logoColor=white"/> <img src="https://img.shields.io/badge/Discord-5865F2?style=flat&logo=discord&logoColor=white"/> <img src="https://img.shields.io/badge/Figma-F24E1E?style=flat&logo=figma&logoColor=white"/>
+<img src="https://img.shields.io/badge/Git-F05032?style=flat&logo=Git&logoColor=white"/> <img src="https://img.shields.io/badge/Github-222222?style=flat&logo=Github&logoColor=white"/> <img src="https://img.shields.io/badge/Notion-000000?style=flat&logo=notion&logoColor=white"/> <img src="https://img.shields.io/badge/Discord-5865F2?style=flat&logo=discord&logoColor=white"/> <img src="https://img.shields.io/badge/Figma-F24E1E?style=flat&logo=figma&logoColor=white"/>
 
 ### Back-end
 
@@ -37,7 +37,7 @@
 
 ### Front_end
 
-<img src="https://img.shields.io/badge/TypeScript-5.6.2-3178C6?style=flat&logo=typescript&logoColor=white"/><img src="https://img.shields.io/badge/React-18.3.1-61DAFB?style=flat&logo=react&logoColor=white"/> <img src="https://img.shields.io/badge/React%20Query-5.59.20-FF4154?style=flat&logo=reactquery&logoColor=white"/><img src="https://img.shields.io/badge/React Hook Form-7.53.2-EC5990?style=flat&logo=reacthookform&logoColor=white"/>   
+<img src="https://img.shields.io/badge/TypeScript-5.6.2-3178C6?style=flat&logo=typescript&logoColor=white"/> <img src="https://img.shields.io/badge/React-18.3.1-61DAFB?style=flat&logo=react&logoColor=white"/> <img src="https://img.shields.io/badge/React%20Query-5.59.20-FF4154?style=flat&logo=reactquery&logoColor=white"/> <img src="https://img.shields.io/badge/React Hook Form-7.53.2-EC5990?style=flat&logo=reacthookform&logoColor=white"/>   
 
 <img src="https://img.shields.io/badge/Tailwind%20CSS-3.4.14-06B6D4?style=flat&logo=tailwindcss&logoColor=white"/> <img src="https://img.shields.io/badge/Axios-1.7.7-5A29E4?style=flat&logo=axios&logoColor=white"/> <img src="https://img.shields.io/badge/Zod-3.23.8-3E67B1?style=flat&logo=zod&logoColor=white"/>
 
