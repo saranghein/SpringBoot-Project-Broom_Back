@@ -71,7 +71,7 @@ public class TeamBoardService {
                                                         teamBoard.getTitle(),
                                                         createdAtStr,
                                                         teamBoard.getTrainingDate().format(DateTimeFormatter.ofPattern(
-                                                                        "yyyy/MM/dd")),
+                                                                        "MM/dd")),
                                                         teamBoard.getMeetingPlace(),
                                                         teamBoard.getMeetingTime().format(DateTimeFormatter.ofPattern(
                                                                         "HH:mm")),
@@ -106,7 +106,7 @@ public class TeamBoardService {
                                                                 createdAtStr,
                                                                 teamBoard.getTrainingDate()
                                                                                 .format(DateTimeFormatter.ofPattern(
-                                                                                                "yyyy/MM/dd")),
+                                                                                                "MM/dd")),
                                                                 teamBoard.getMeetingPlace(),
                                                                 teamBoard.getMeetingTime()
                                                                                 .format(DateTimeFormatter.ofPattern(
@@ -166,7 +166,7 @@ public class TeamBoardService {
                                 author,
                                 teamBoard.getTitle(),
                                 createdAtStr,
-                                teamBoard.getTrainingDate().format(DateTimeFormatter.ofPattern("MM/DD")),
+                                teamBoard.getTrainingDate().format(DateTimeFormatter.ofPattern("MM/dd")),
                                 teamBoard.getMeetingPlace(),
                                 teamBoard.getMeetingTime().format(DateTimeFormatter.ofPattern(
                                                 "HH:mm")),
