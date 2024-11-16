@@ -1,19 +1,24 @@
 package com.kwhackathon.broom.carpool.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.kwhackathon.broom.carpool.entity.CarpoolBoard;
+
 import java.util.List;
 import java.time.LocalDate;
 
 
 
 public interface CarpoolBoardRepository extends JpaRepository<CarpoolBoard, Long> {
-    List<CarpoolBoard> findByTitleContaining(String title);
+    @Query("SELECT e FROM CarpoolBoard e ORDER BY e.createdAt DESC")
+    List<CarpoolBoard> findAllOrderByCreatedAtDesc();
+    
+    List<CarpoolBoard> findByTitleContainingOrderByCreatedAtDesc(String title);
 
-    List<CarpoolBoard> findByTrainingDate(LocalDate trainingDate);
+    List<CarpoolBoard> findByTrainingDateOrderByCreatedAtDesc(LocalDate trainingDate);
 
-    List<CarpoolBoard> findByDepartPlaceContaining(String departPlace);
+    List<CarpoolBoard> findByDepartPlaceContainingOrderByCreatedAtDesc(String departPlace);
 
-    List<CarpoolBoard> findByIsFull(boolean full);
+    List<CarpoolBoard> findByIsFullOrderByCreatedAtDesc(boolean full);
 }

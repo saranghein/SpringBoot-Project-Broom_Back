@@ -4,13 +4,17 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.kwhackathon.broom.team.entity.TeamBoard;
 
 public interface TeamBoardRepository extends JpaRepository<TeamBoard, Long> {
-    List<TeamBoard> findByTitleContaining(String title);
+    @Query("SELECT e FROM TeamBoard e ORDER BY e.createdAt DESC")
+    List<TeamBoard> findAllOrderByCreatedAtDesc();
 
-    List<TeamBoard> findByTrainingDate(LocalDate trainingDate);
+    List<TeamBoard> findByTitleContainingOrderByCreatedAtDesc(String title);
 
-    List<TeamBoard> findByIsFull(boolean full);
+    List<TeamBoard> findByTrainingDateOrderByCreatedAtDesc(LocalDate trainingDate);
+
+    List<TeamBoard> findByIsFullOrderByCreatedAtDesc(boolean full);
 }

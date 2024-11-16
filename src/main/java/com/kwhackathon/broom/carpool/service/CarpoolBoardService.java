@@ -53,7 +53,7 @@ public class CarpoolBoardService {
 
         public CarpoolBoardListDto getAllBoards() {
                 List<CarpoolBoardListElement> elements = new ArrayList<>();
-                elements = carpoolBoardRepository.findAll().stream()
+                elements = carpoolBoardRepository.findAllOrderByCreatedAtDesc().stream()
                                 .map(carpoolBoard -> {
                                         LocalDateTime createdAt = carpoolBoard.getCreatedAt();
                                         String createdAtStr = createdAt
@@ -86,7 +86,7 @@ public class CarpoolBoardService {
         public CarpoolBoardListDto searchCarpoolBoard(String category, String keyword) {
                 List<CarpoolBoardListElement> elements = new ArrayList<>();
                 if (category.equals("title")) {
-                        elements = carpoolBoardRepository.findByTitleContaining(keyword).stream()
+                        elements = carpoolBoardRepository.findByTitleContainingOrderByCreatedAtDesc(keyword).stream()
                                         .map(carpoolBoard -> {
                                                 LocalDateTime createdAt = carpoolBoard.getCreatedAt();
                                                 String createdAtStr = createdAt.format(
@@ -116,7 +116,7 @@ public class CarpoolBoardService {
                                         .collect(Collectors.toList());
                 }
                 if (category.equals("trainingDate")) {
-                        elements = carpoolBoardRepository.findByTrainingDate(LocalDate.parse(keyword)).stream()
+                        elements = carpoolBoardRepository.findByTrainingDateOrderByCreatedAtDesc(LocalDate.parse(keyword)).stream()
                                         .map(carpoolBoard -> {
                                                 LocalDateTime createdAt = carpoolBoard.getCreatedAt();
                                                 String createdAtStr = createdAt.format(
@@ -146,7 +146,7 @@ public class CarpoolBoardService {
                                         .collect(Collectors.toList());
                 }
                 if (category.equals("departPlace")) {
-                        elements = carpoolBoardRepository.findByDepartPlaceContaining(keyword).stream()
+                        elements = carpoolBoardRepository.findByDepartPlaceContainingOrderByCreatedAtDesc(keyword).stream()
                                         .map(carpoolBoard -> {
                                                 LocalDateTime createdAt = carpoolBoard.getCreatedAt();
                                                 String createdAtStr = createdAt.format(
@@ -180,7 +180,7 @@ public class CarpoolBoardService {
 
         public CarpoolBoardListDto getRecruitingBoard() {
                 List<CarpoolBoardListElement> elements = new ArrayList<>();
-                elements = carpoolBoardRepository.findByIsFull(false).stream()
+                elements = carpoolBoardRepository.findByIsFullOrderByCreatedAtDesc(false).stream()
                                 .map(carpoolBoard -> {
                                         LocalDateTime createdAt = carpoolBoard.getCreatedAt();
                                         String createdAtStr = createdAt
@@ -312,7 +312,6 @@ public class CarpoolBoardService {
                                 .orElseThrow(() -> new NullPointerException("게시물을 찾을 수 없습니다"));
                 carpoolBoard.updateIsFull(dto);
         }
-
     public Optional<CarpoolBoard> getCarpoolBoard(Long carpoolBoardId) {
         return carpoolBoardRepository.findById(carpoolBoardId);
     }

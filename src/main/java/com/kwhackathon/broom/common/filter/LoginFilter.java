@@ -62,6 +62,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter{
         String refreshToken = jwtUtil.createJwt("refresh", userId, role, 24 * 60 * 60 * 1000L); // 24시간
 
         response.addHeader("Authorization", "Bearer " + accessToken); // 응답 헤더에 access토큰 설정
+        response.addHeader("Refresh", "Bearer " + refreshToken); // 테스트용 리프레시 헤더
         response.addHeader(HttpHeaders.SET_COOKIE, createCookie("refresh", refreshToken).toString());// 응답시 쿠키에 refresh토큰 저장
 
         response.setStatus(HttpStatus.OK.value());
@@ -102,9 +103,9 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter{
     private ResponseCookie createCookie(String key, String value) {
         return ResponseCookie.from(key, value)
                 .httpOnly(true)
-                // .secure(true)
+                .secure(true)
                 .path("/")
-                .maxAge(24 * 60 * 60)
+                .maxAge(24 * 60 * 60 * 1000L)
                 .sameSite("None")
                 .build();
     }

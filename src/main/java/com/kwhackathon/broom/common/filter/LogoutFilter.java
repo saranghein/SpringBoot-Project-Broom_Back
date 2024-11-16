@@ -84,7 +84,7 @@ public class LogoutFilter extends GenericFilterBean {
         // redis나 mysql로 토큰을 관리하는 방법 대신으로 만료 토큰을 바로 만료시켜서 탈취 대응
         ResponseCookie cookie = ResponseCookie.from("refresh", null)
                 .httpOnly(true)
-                // .secure(true)
+                .secure(true)
                 .path("/")
                 .maxAge(0)
                 .sameSite("None")
