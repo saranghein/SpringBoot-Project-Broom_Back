@@ -28,7 +28,7 @@ public class ChatMessageForTeamService {
     private static final String CARPOOL_EXCHANGE_NAME = "chat.team.exchange";
     private static final String CHAT_QUEUE_NAME = "chat.team.queue";
 
-    private final SimpMessagingTemplate messagingTemplate;
+//    private final SimpMessagingTemplate messagingTemplate;
     private final ChatRoomForTeamRepository chatRoomForTeamRepository;
     private final RabbitTemplate rabbitTemplate;
     private final ChatMessageForTeamRepository chatMessageForTeamRepository;
@@ -45,12 +45,14 @@ public class ChatMessageForTeamService {
         UserDetails sender = userService.loadUserByUsername(messageDto.getSenderId());
 
         // ChatRoomForCarpool 엔티티 생성 또는 조회
-        com.kwhackathon.broom.chatMessage.entity.ChatMessageForTeam message = messageDto.toEntity(chatRoom,  sender);
+        ChatMessageForTeam message = messageDto.toEntity(chatRoom,  sender);
         chatMessageForTeamRepository.save(message);
         System.out.println("RabbitMQ 전송: Exchange=" + exchange + ", RoutingKey=" + routingKey + ", Content=" + messageDto.getContent());
+        chatRoom.setLastChatMessageForCarpool(message); // 마지막 메시지 엔티티 업데이트
+        chatRoomForTeamRepository.save(chatRoom);              // ChatRoomForCarpool 업데이트
 
         // RabbitMQ로 메시지 전송
-        rabbitTemplate.convertAndSend(exchange, routingKey, messageDto);
+        rabbitTemplate.convertAndSend(exchange, routingKey, ChatMessageForTeamDto.Response.fromEntity(message));
 
         // WebSocket으로 클라이언트에게 메시지 전송
 //    messagingTemplate.convertAndSend("/topic/chat.carpool.room." + messageDto.getChatRoomId(), messageDto);
@@ -90,7 +92,7 @@ public class ChatMessageForTeamService {
     private void sendReadStatusUpdateMessage(String chatRoomId, ReadStatusUpdateDto readStatusUpdate) {
         // RabbitMQ는 비동기 이므로
         // 실시간 반영을 위해 WebSocket template으로 전송
-        messagingTemplate.convertAndSend("chat.team.room." + chatRoomId, readStatusUpdate);
+//        messagingTemplate.convertAndSend("chat.team.room." + chatRoomId, readStatusUpdate);
     }
 
     public List<ChatMessageForTeam> findPreviousMessages(String chatRoomId) {
