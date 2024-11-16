@@ -312,6 +312,7 @@ public class CarpoolBoardService {
                                 .orElseThrow(() -> new NullPointerException("게시물을 찾을 수 없습니다"));
                 carpoolBoard.updateIsFull(dto);
         }
+
     public Optional<CarpoolBoard> getCarpoolBoard(Long carpoolBoardId) {
         return carpoolBoardRepository.findById(carpoolBoardId);
     }
