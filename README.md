@@ -38,7 +38,7 @@
 
 <img src="https://img.shields.io/badge/MySQL-8.0.39-4479A1?style=flat&logo=MySQL&logoColor=white"/> <img src="https://img.shields.io/badge/JWT-0.12.3-000000?style=flat&logo=jsonwebtokens&logoColor=white"/> <img src="https://img.shields.io/badge/Web%20Socket-3.3.5-010101?style=flat&logo=socketdotio&logoColor=white"/> <img src="https://img.shields.io/badge/RabbitMQ-3.13.7-FF6600?style=flat&logo=rabbitmq&logoColor=white"/> <img src="https://img.shields.io/badge/Erlang-26.2.5.5-A90533?style=flat&logo=erlang&logoColor=white"/>
 
-### Front_end
+### Front-end
 
 <img src="https://img.shields.io/badge/TypeScript-5.6.2-3178C6?style=flat&logo=typescript&logoColor=white"/> <img src="https://img.shields.io/badge/React-18.3.1-61DAFB?style=flat&logo=react&logoColor=white"/> <img src="https://img.shields.io/badge/React%20Query-5.59.20-FF4154?style=flat&logo=reactquery&logoColor=white"/> <img src="https://img.shields.io/badge/React Hook Form-7.53.2-EC5990?style=flat&logo=reacthookform&logoColor=white"/>   
 
