@@ -37,10 +37,4 @@ public class JwtUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration()
                 .before(new Date());
     }
-    
-    // access토큰인지 refresh토큰인지 카테고리 추출
-    public String getCategory(String token) {
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("category",
-                String.class);
-    }
 }

@@ -22,7 +22,6 @@ public class JwtGenerator {
 
     public String generateJwt(String category, String username, String role, Long expiredMs) {
         return Jwts.builder()
-                .claim("category", category) // access토큰인지 refresh토큰인지 표시
                 .claim("userId",
                         username) // 페이로드에 userId(email)추가
                 .claim("role", role) // 페이로드에 role추가
