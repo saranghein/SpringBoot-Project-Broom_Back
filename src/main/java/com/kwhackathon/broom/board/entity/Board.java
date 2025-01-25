@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.kwhackathon.broom.board.dto.BoardRequest.WriteBoardDto;
 import com.kwhackathon.broom.board.util.category.Category;
 import com.kwhackathon.broom.user.entity.User;
 
@@ -69,4 +70,17 @@ public class Board {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    public void updateBoard(WriteBoardDto writeBoardDto) {
+        this.title = writeBoardDto.getTitle();
+        this.content = writeBoardDto.getContent();
+        this.place = writeBoardDto.getPlace();
+        this.time = writeBoardDto.getTime();
+        this.personnel = writeBoardDto.getPersonnel();
+        this.trainingDate = writeBoardDto.getTrainingDate();
+    }
+
+    public void changeIsFullStatus() {
+        this.isFull = !this.isFull;
+    }
 }
