@@ -3,6 +3,7 @@ package com.kwhackathon.broom.board.entity;
 import java.util.UUID;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
@@ -47,7 +48,7 @@ public class Board {
     private String place;
 
     @Column(name = "time", nullable = false)
-    private LocalDateTime time;
+    private LocalTime time;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)

@@ -1,7 +1,7 @@
 package com.kwhackathon.broom.board.dto;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import com.kwhackathon.broom.board.entity.Board;
 import com.kwhackathon.broom.board.util.category.Category;
@@ -17,7 +17,7 @@ public class BoardRequest {
         private String title;
         private String content;
         private String place;
-        private LocalDateTime time;
+        private LocalTime time;
         private int personnel;
         private LocalDate trainingDate;
         private Category category;
