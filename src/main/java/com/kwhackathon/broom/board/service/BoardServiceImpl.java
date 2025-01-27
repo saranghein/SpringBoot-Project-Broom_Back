@@ -41,7 +41,7 @@ public class BoardServiceImpl implements BoardService {
         User user = userService.loadUserByUsername(userId);
         Board board = writeBoardDto.toEntity(user);
         boardRepository.save(board);
-        return board.getId();
+        return board.getBoardId();
     }
 
     @Override
@@ -119,6 +119,11 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional
     public void deleteBoard(String boardId) {
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        Board board = boardRepository.findById(boardId).orElseThrow(() -> new NullPointerException("게시글이 존재하지 않습니다."));
+        if (!board.getUser().getUserId().equals(userId)) {
+            throw new IllegalArgumentException("올바른 사용자가 아닙니다.");
+        }
         boardRepository.deleteById(boardId);
     }
 }
