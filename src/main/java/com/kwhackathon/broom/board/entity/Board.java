@@ -36,7 +36,7 @@ public class Board {
     @Id
     @Builder.Default
     @Column(name = "board_id", nullable = false, unique = true)
-    private String id = UUID.randomUUID().toString();
+    private String boardId = UUID.randomUUID().toString();
 
     @Column(name = "title", nullable = false)
     private String title;

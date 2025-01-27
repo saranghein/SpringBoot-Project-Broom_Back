@@ -24,7 +24,7 @@ public class BoardResponse {
         private boolean isFull;
 
         public BoardListElement(Board board) {
-            this.boardId = board.getId();
+            this.boardId = board.getBoardId();
             this.title = board.getTitle();
             this.createdAt = formattingCreatedAt(board.getCreatedAt());
             this.trainingDate = board.getTrainingDate();
@@ -67,7 +67,7 @@ public class BoardResponse {
         private MilitaryChaplain writerMilitaryChaplain;
 
         public SingleBoardDetail(Board board, User user) {
-            this.boardId = board.getId();
+            this.boardId = board.getBoardId();
             this.title = board.getTitle();
             this.content = board.getContent();
             this.place = board.getPlace();
