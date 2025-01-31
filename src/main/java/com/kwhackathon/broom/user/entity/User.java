@@ -8,8 +8,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.kwhackathon.broom.carpool.entity.CarpoolBoard;
-import com.kwhackathon.broom.team.entity.TeamBoard;
+import com.kwhackathon.broom.board.entity.Board;
+import com.kwhackathon.broom.bookmark.entity.Bookmark;
 import com.kwhackathon.broom.user.dto.request.UpdateUserInfoDto;
 import com.kwhackathon.broom.user.util.MilitaryChaplain;
 import com.kwhackathon.broom.user.util.Role;
@@ -55,10 +55,10 @@ public class User implements UserDetails {
     private Role role; // 권한 정보
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<CarpoolBoard> carpoolBoards;
+    private List<Board> boards;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<TeamBoard> teamBoards;
+    private List<Bookmark> bookmarks;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
