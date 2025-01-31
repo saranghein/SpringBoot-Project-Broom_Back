@@ -1,5 +1,6 @@
 package com.kwhackathon.broom.board.entity;
 
+import java.util.List;
 import java.util.UUID;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -10,8 +11,10 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import com.kwhackathon.broom.board.dto.BoardRequest.WriteBoardDto;
 import com.kwhackathon.broom.board.util.category.Category;
+import com.kwhackathon.broom.bookmark.entity.Bookmark;
 import com.kwhackathon.broom.user.entity.User;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -20,6 +23,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -71,6 +75,9 @@ public class Board {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<Bookmark> bookmarks;
 
     public void updateBoard(WriteBoardDto writeBoardDto) {
         this.title = writeBoardDto.getTitle();
