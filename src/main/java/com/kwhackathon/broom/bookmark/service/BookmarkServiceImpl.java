@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,17 +49,13 @@ public class BookmarkServiceImpl implements BookmarkService {
 
     @Override
     public List<BoardListElement> getBookmark(int page, Category category) {
-        Pageable pageable = PageRequest.of(page, PAGE_SIZE);
+        Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("createdAt").descending());
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findById(userId).orElseThrow(() -> new NullPointerException("올바른 사용자 정보가 아닙니다."));
-        
-        return boardRepository.findSliceByBookmarksUser(pageable, user).stream()
-                .map((board) -> new BoardListElement(board))
+
+        return boardRepository.findSliceByBookmarksUserUserId(pageable, userId)
+                .stream()
+                .map((board) -> new BoardListElement(board, true))
                 .collect(Collectors.toList());
-        // return bookmarkRepository.findSliceByUserUserIdOrderByBoardCreatedAtDesc(pageable, userId).getContent()
-        //         .stream()
-        //         .map((bookmark) -> new BoardListElement(bookmark.getBoard()))
-        //         .collect(Collectors.toList());
     }
 
     @Override
