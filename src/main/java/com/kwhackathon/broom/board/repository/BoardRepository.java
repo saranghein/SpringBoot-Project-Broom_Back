@@ -3,9 +3,12 @@ package com.kwhackathon.broom.board.repository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.kwhackathon.broom.board.entity.Board;
 import com.kwhackathon.broom.board.util.category.Category;
+import com.kwhackathon.broom.user.entity.User;
 
 import java.time.LocalDate;
 
@@ -24,4 +27,9 @@ public interface BoardRepository extends JpaRepository<Board, String> {
 
     // 인원 모집이 진행 중인 게시글만 조회
     Slice<Board> findSliceByCategoryAndIsFull(Pageable pageable, Category category, Boolean isFull);
+
+    Slice<Board> findSliceByBookmarksUser(Pageable pageable, User user);
+
+    @Query("SELECT b FROM Board b JOIN b.bookmarks bm WHERE bm.user.userId = :userId")
+    Slice<Board> findSliceByBookmarksUserUserId(Pageable pageable, @Param("userId")String userId);
 }
