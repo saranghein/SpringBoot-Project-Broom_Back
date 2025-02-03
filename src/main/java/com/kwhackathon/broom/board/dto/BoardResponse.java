@@ -4,36 +4,98 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import com.kwhackathon.broom.board.entity.Board;
-import com.kwhackathon.broom.board.util.category.Category;
 import com.kwhackathon.broom.user.entity.User;
-import com.kwhackathon.broom.user.util.MilitaryChaplain;
+import com.kwhackathon.broom.user.util.MilitaryBranch;
 
 import lombok.Getter;
 
 public class BoardResponse {
     @Getter
-    public static class BoardListElement {
+    public static class BoardId {
         private String boardId;
+
+        public BoardId(String boardId) {
+            this.boardId = boardId;
+        }
+    }
+
+    @Getter
+    private static class Author {
+        private String nickname;
+        private int reserveYear;
+        private MilitaryBranch militaryBranch;
+
+        public Author(User user) {
+            this.nickname = user.getNickname();
+            this.reserveYear = LocalDateTime.now().getYear() - user.getDischargeYear();
+            this.militaryBranch = user.getMilitaryBranch();
+        }
+    }
+
+    @Getter
+    private static class Content {
         private String title;
-        private String createdAt;
         private LocalDate trainingDate;
         private String place;
         private LocalTime time;
-        private boolean isFull;
 
-        public BoardListElement(Board board) {
-            this.boardId = board.getBoardId();
+        public Content(Board board) {
             this.title = board.getTitle();
-            this.createdAt = formattingCreatedAt(board.getCreatedAt());
             this.trainingDate = board.getTrainingDate();
             this.place = board.getPlace();
             this.time = board.getTime();
+        }
+    }
+
+    @Getter
+    private static class ContentDetail extends Content {
+        private String content;
+        private int personnel;
+
+        public ContentDetail(Board board) {
+            super(board);
+            this.content = board.getContent();
+            this.personnel = board.getPersonnel();
+        }
+    }
+
+    @Getter
+    private static class Status {
+        private String boardId;
+        private String createdAt;
+        private boolean isFull;
+        private boolean isBookmark;
+
+        public Status(Board board, boolean isBookmark) {
+            this.boardId = board.getBoardId();
+            this.createdAt = board.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy/MM/dd hh:mm"));
             this.isFull = board.isFull();
+            this.isBookmark = isBookmark; // 임시
         }
 
-        // DTO에 있어야 할 내용은 아닌거 같아서 옮겨야 할듯
+        public Status(String boardId, String createdAt, boolean isFull, boolean isBookmark) {
+            this.boardId = boardId;
+            this.createdAt = createdAt;
+            this.isFull = isFull;
+            this.isBookmark = isBookmark;
+        }
+    }
+
+    @Getter
+    public static class BoardListElement {
+        private Status status;
+
+        private Content content;
+
+        public BoardListElement(Board board, boolean isBookmark) {
+            this.status = new Status(board.getBoardId(), formattingCreatedAt(board.getCreatedAt()), board.isFull(),
+                    isBookmark);
+            this.content = new Content(board);
+        }
+
         private String formattingCreatedAt(LocalDateTime createdAt) {
             // 게시글 생성 일자가 오늘인 경우 작성 시간만 반환
             if (createdAt.toLocalDate().compareTo(LocalDate.now()) == 0) {
@@ -51,37 +113,28 @@ public class BoardResponse {
     }
 
     @Getter
+    public static class BoardList {
+        private List<BoardListElement> result;
+        private boolean hasNext;
+
+        public BoardList(List<BoardListElement> boardListElement, boolean hasNext) {
+            this.result = boardListElement;
+            this.hasNext = hasNext;
+        }
+    }
+
+    @Getter
     public static class SingleBoardDetail {
-        private String boardId;
-        private String title;
-        private String content;
-        private String place;
-        private LocalTime time;
-        private LocalDateTime createdAt;
-        private int personnel;
-        private boolean isFull;
-        private LocalDate trainingDate;
-        private Category category;
-        private String WriterNickname;
-        private int writerDischargeYear;
-        private MilitaryChaplain writerMilitaryChaplain;
+        private Author author;
 
-        public SingleBoardDetail(Board board, User user) {
-            this.boardId = board.getBoardId();
-            this.title = board.getTitle();
-            this.content = board.getContent();
-            this.place = board.getPlace();
-            this.time = board.getTime();
-            this.createdAt = board.getCreatedAt();
-            this.personnel = board.getPersonnel();
-            this.isFull = board.isFull();
-            this.trainingDate = board.getTrainingDate();
-            this.category = board.getCategory();
+        private Status status;
 
-            // 작성자 정보
-            this.WriterNickname = user.getNickname();
-            this.writerDischargeYear = user.getDischargeYear();
-            this.writerMilitaryChaplain = user.getMilitaryChaplain();
+        private ContentDetail contentDetail;
+
+        public SingleBoardDetail(User user, Board board, boolean isBookmark) {
+            this.author = new Author(user);
+            this.status = new Status(board, isBookmark);
+            this.contentDetail = new ContentDetail(board);
         }
     }
 }
