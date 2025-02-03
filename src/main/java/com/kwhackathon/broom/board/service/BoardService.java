@@ -1,25 +1,29 @@
 package com.kwhackathon.broom.board.service;
 
-import java.util.List;
+import org.springframework.validation.annotation.Validated;
 
 import com.kwhackathon.broom.board.dto.BoardRequest.WriteBoardDto;
-import com.kwhackathon.broom.board.dto.BoardResponse.BoardListElement;
+import com.kwhackathon.broom.board.dto.BoardResponse.BoardId;
+import com.kwhackathon.broom.board.dto.BoardResponse.BoardList;
 import com.kwhackathon.broom.board.dto.BoardResponse.SingleBoardDetail;
 
-public interface BoardService {
-    String createBoard(WriteBoardDto writeBoardDto);
+import jakarta.validation.Valid;
 
-    List<BoardListElement> getAllBoard(int page, String category);
+@Validated
+public interface BoardService {
+    BoardId createBoard(@Valid WriteBoardDto writeBoardDto);
+
+    BoardList getAllBoard(int page, String category);
 
     SingleBoardDetail getSingleBoardDetail(String boardId);
 
-    List<BoardListElement> searchBoard(int page, String category, String type, String keyword);
+    BoardList searchBoard(int page, String category, String type, String keyword);
 
-    List<BoardListElement> getRecruitingBoard(int page, String category);
+    BoardList getRecruitingBoard(int page, String category);
 
-    List<BoardListElement> getMyBoard(int page, String category);
+    BoardList getMyBoard(int page, String category);
 
-    void updateBoard(String boardId, WriteBoardDto writeBoardDto);
+    void updateBoard(String boardId, @Valid WriteBoardDto writeBoardDto);
 
     void updateIsFull(String boardId);
 
