@@ -1,25 +1,27 @@
 package com.kwhackathon.broom.board.service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.kwhackathon.broom.board.dto.BoardRequest.WriteBoardDto;
+import com.kwhackathon.broom.board.dto.BoardResponse.BoardId;
+import com.kwhackathon.broom.board.dto.BoardResponse.BoardList;
 import com.kwhackathon.broom.board.dto.BoardResponse.BoardListElement;
 import com.kwhackathon.broom.board.dto.BoardResponse.SingleBoardDetail;
 import com.kwhackathon.broom.board.entity.Board;
 import com.kwhackathon.broom.board.repository.BoardRepository;
 import com.kwhackathon.broom.board.util.category.Category;
+import com.kwhackathon.broom.bookmark.repository.BookmarkRepository;
 import com.kwhackathon.broom.user.entity.User;
-import com.kwhackathon.broom.user.repository.UserRepository;
 import com.kwhackathon.broom.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -27,71 +29,97 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-// 조회 결과에 hasNext추가될 수 있음
+// 모든 반환 값에 북마크인지 아닌지 표시하기 위해 게시판 하나 마다 exist쿼리 하나 나가는데 이거 최적화 필요
 public class BoardServiceImpl implements BoardService {
     private final BoardRepository boardRepository;
-    private final UserRepository userRepository;
+    private final BookmarkRepository bookmarkRepository;
     private final UserService userService;
     private final static int PAGE_SIZE = 15;
 
     @Override
     @Transactional
-    public String createBoard(WriteBoardDto writeBoardDto) {
+    public BoardId createBoard(WriteBoardDto writeBoardDto) {
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userService.loadUserByUsername(userId);
         Board board = writeBoardDto.toEntity(user);
         boardRepository.save(board);
-        return board.getBoardId();
+
+        return new BoardId(board.getBoardId());
     }
 
     @Override
-    public List<BoardListElement> getAllBoard(int page, String category) {
+    public BoardList getAllBoard(int page, String category) {
         Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("createdAt").descending());
-        return boardRepository.findSliceByCategory(pageable, Category.valueOf(category)).getContent().stream()
-                .map((board) -> new BoardListElement(board))
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        Slice<Board> slice = boardRepository.findSliceByCategory(pageable, Category.valueOf(category));
+        List<BoardListElement> elements = slice.getContent().stream()
+                .map((board) -> new BoardListElement(board, bookmarkRepository.existsByUserUserIdAndBoardBoardId(
+                        userId, board.getBoardId())))
                 .collect(Collectors.toList());
+        return new BoardList(elements, slice.hasNext());
     }
 
     @Override
     public SingleBoardDetail getSingleBoardDetail(String boardId) {
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new NullPointerException("존재하지 않는 게시물입니다."));
-        return new SingleBoardDetail(board, board.getUser());
+        return new SingleBoardDetail(board.getUser(), board, bookmarkRepository.existsByUserUserIdAndBoardBoardId(
+                userId, board.getBoardId()));
     }
 
     @Override
-    public List<BoardListElement> searchBoard(int page, String category, String type, String keyword) {
+    public BoardList searchBoard(int page, String category, String type, String keyword) {
         Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("createdAt").descending());
-        List<Board> result = new ArrayList<>();
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        Slice<Board> slice = searchByCondition(pageable, category, type, keyword);
+        List<BoardListElement> elements = slice.getContent().stream()
+                .map((board) -> new BoardListElement(board, bookmarkRepository.existsByUserUserIdAndBoardBoardId(
+                        userId, board
+                                .getBoardId())))
+                .collect(Collectors.toList());
+        return new BoardList(elements, slice.hasNext());
+    }
+
+    private Slice<Board> searchByCondition(Pageable pageable, String category, String type, String keyword) {
         if (type.equals("title")) {
-            result = boardRepository.findSliceByCategoryAndTitle(pageable, Category.valueOf(category), keyword)
-                    .getContent();
+            return boardRepository.findSliceByCategoryAndTitle(pageable, Category.valueOf(category), keyword);
         }
         if (type.equals("trainingDate")) {
-            result = boardRepository.findSliceByCategoryAndTrainingDate(pageable, Category.valueOf(category),
-                    LocalDate.parse(keyword)).getContent();
+            return boardRepository.findSliceByCategoryAndTrainingDate(pageable, Category.valueOf(category),
+                    LocalDate.parse(keyword));
         }
         if (type.equals("place")) {
-            result = boardRepository.findSliceByCategoryAndPlace(pageable, Category.valueOf(category), keyword)
-                    .getContent();
+            return boardRepository.findSliceByCategoryAndPlace(pageable, Category.valueOf(category), keyword);
         }
-        return result.stream().map((board) -> new BoardListElement(board)).collect(Collectors.toList());
+        throw new IllegalArgumentException("올바른 검색조건이 아닙니다.");
     }
 
     @Override
-    public List<BoardListElement> getRecruitingBoard(int page, String category) {
+    public BoardList getRecruitingBoard(int page, String category) {
         Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("createdAt").descending());
-        return boardRepository.findSliceByCategoryAndIsFull(pageable, Category.valueOf(category), false)
-                .getContent()
-                .stream()
-                .map((board) -> new BoardListElement(board))
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        Slice<Board> slice = boardRepository.findSliceByCategoryAndIsFull(pageable, Category.valueOf(category), false);
+        List<BoardListElement> elements = slice.getContent().stream()
+                .map((board) -> new BoardListElement(board, bookmarkRepository.existsByUserUserIdAndBoardBoardId(
+                        userId, board
+                                .getBoardId())))
                 .collect(Collectors.toList());
+        return new BoardList(elements, slice.hasNext());
     }
 
     @Override
-    public List<BoardListElement> getMyBoard(int page, String category) {
+    public BoardList getMyBoard(int page, String category) {
+        Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("createdAt").descending());
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByUserId(userId).orElseThrow(() -> new NullPointerException("사용자 정보가 없습니다."));
-        return user.getBoards().stream().map((board) -> new BoardListElement(board)).collect(Collectors.toList());
+
+        Slice<Board> slice = boardRepository.findSliceByCategoryAndUserUserId(pageable, Category.valueOf(category),
+                userId);
+        List<BoardListElement> elements = slice.getContent().stream()
+                .map((board) -> new BoardListElement(board, bookmarkRepository.existsByUserUserIdAndBoardBoardId(
+                        userId, board
+                                .getBoardId())))
+                .collect(Collectors.toList());
+        return new BoardList(elements, slice.hasNext());
     }
 
     @Override
@@ -104,7 +132,7 @@ public class BoardServiceImpl implements BoardService {
         }
         board.updateBoard(writeBoardDto);
     }
-    
+
     @Override
     @Transactional
     public void updateIsFull(String boardId) {
