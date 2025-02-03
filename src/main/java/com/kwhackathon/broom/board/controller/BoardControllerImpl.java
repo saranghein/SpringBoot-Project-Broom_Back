@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.kwhackathon.broom.board.dto.BoardRequest.WriteBoardDto;
 import com.kwhackathon.broom.board.service.BoardService;
 
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,6 +28,8 @@ public class BoardControllerImpl implements BoardController {
     public ResponseEntity<?> createBoard(@RequestBody WriteBoardDto writeBoardDto) {
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(boardService.createBoard(writeBoardDto));
+        } catch (ConstraintViolationException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("오류가 발생하였습니다.");
         }
@@ -84,6 +87,8 @@ public class BoardControllerImpl implements BoardController {
         } catch (NullPointerException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (ConstraintViolationException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("오류가 발생하였습니다.");

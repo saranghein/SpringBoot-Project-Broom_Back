@@ -11,7 +11,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 
 import com.kwhackathon.broom.board.dto.BoardRequest.WriteBoardDto;
 import com.kwhackathon.broom.board.dto.BoardResponse.BoardId;
@@ -25,7 +24,6 @@ import com.kwhackathon.broom.bookmark.repository.BookmarkRepository;
 import com.kwhackathon.broom.user.entity.User;
 import com.kwhackathon.broom.user.service.UserService;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Service

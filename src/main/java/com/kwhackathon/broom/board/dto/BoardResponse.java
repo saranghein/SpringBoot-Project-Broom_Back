@@ -2,7 +2,6 @@ package com.kwhackathon.broom.board.dto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -40,13 +39,13 @@ public class BoardResponse {
         private String title;
         private LocalDate trainingDate;
         private String place;
-        private LocalTime time;
+        private String time;
 
         public Content(Board board) {
             this.title = board.getTitle();
             this.trainingDate = board.getTrainingDate();
             this.place = board.getPlace();
-            this.time = board.getTime();
+            this.time = board.getTime().format(DateTimeFormatter.ofPattern("hh:mm"));
         }
     }
 

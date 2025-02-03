@@ -8,7 +8,6 @@ import org.springframework.data.repository.query.Param;
 
 import com.kwhackathon.broom.board.entity.Board;
 import com.kwhackathon.broom.board.util.category.Category;
-import com.kwhackathon.broom.user.entity.User;
 
 import java.time.LocalDate;
 
@@ -27,8 +26,8 @@ public interface BoardRepository extends JpaRepository<Board, String> {
 
     // 인원 모집이 진행 중인 게시글만 조회
     Slice<Board> findSliceByCategoryAndIsFull(Pageable pageable, Category category, Boolean isFull);
-
-    Slice<Board> findSliceByBookmarksUser(Pageable pageable, User user);
+            
+    Slice<Board> findSliceByCategoryAndUserUserId(Pageable pageable, Category category, String userId);
 
     @Query("SELECT b FROM Board b JOIN b.bookmarks bm WHERE bm.user.userId = :userId")
     Slice<Board> findSliceByBookmarksUserUserId(Pageable pageable, @Param("userId")String userId);
