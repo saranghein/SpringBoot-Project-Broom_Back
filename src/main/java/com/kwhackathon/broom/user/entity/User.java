@@ -10,8 +10,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.kwhackathon.broom.board.entity.Board;
 import com.kwhackathon.broom.bookmark.entity.Bookmark;
-import com.kwhackathon.broom.user.dto.request.UpdateUserInfoDto;
-import com.kwhackathon.broom.user.util.MilitaryChaplain;
+import com.kwhackathon.broom.participant.entity.Participant;
+import com.kwhackathon.broom.user.dto.UserRequest.ChangeUserInfoDto;
+import com.kwhackathon.broom.user.util.MilitaryBranch;
 import com.kwhackathon.broom.user.util.Role;
 
 import jakarta.persistence.CascadeType;
@@ -46,9 +47,9 @@ public class User implements UserDetails {
     @Column(name = "discharge_year", nullable = false)
     private int dischargeYear; // 전역 연도
 
-    @Column(name = "military_chaplain", nullable = false)
+    @Column(name = "military_branch", nullable = false)
     @Enumerated(EnumType.STRING)
-    private MilitaryChaplain militaryChaplain; // 군구분
+    private MilitaryBranch militaryBranch; // 군구분
 
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -59,6 +60,9 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Bookmark> bookmarks;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<Participant> participants;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -77,10 +81,10 @@ public class User implements UserDetails {
         return this.userId;
     }
 
-    public void updateUserInfo(UpdateUserInfoDto dto) {
+    public void updateUserInfo(ChangeUserInfoDto dto) {
         this.nickname = dto.getNickname();
         this.dischargeYear = dto.getDischargeYear();
-        this.militaryChaplain = dto.getMilitaryChaplain();
+        this.militaryBranch = dto.getMilitaryBranch();
     }
 
     public void updatePassword(String newPassword) {
