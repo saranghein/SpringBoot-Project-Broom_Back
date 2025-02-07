@@ -74,7 +74,7 @@ public class UserController implements UserOperations {
     @PostMapping("/reissue")
     public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) {
         try {
-            TokenDto tokens = userService.reissue(request.getHeader("Refresh"));
+            TokenDto tokens = userService.reissue(request.getCookies());
 
             response.setHeader("Authorization", "Bearer " + tokens.getAccessToken());
             response.addCookie(cookieGenerator.generateCookie("refresh", tokens.getRefreshToken(), 24 * 60 * 60));
