@@ -37,9 +37,10 @@ public class BoardControllerImpl implements BoardController {
 
     @Override
     @GetMapping("/board/view/all/{page}")
-    public ResponseEntity<?> getAllBoards(@PathVariable("page") int page, @RequestParam("category") String category) {
+    public ResponseEntity<?> getAllBoards(@PathVariable("page") int page, @RequestParam("category") String category, 
+            @RequestParam("isFull") boolean isFull) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(boardService.getAllBoard(page, category));
+            return ResponseEntity.status(HttpStatus.OK).body(boardService.getAllBoard(page, category, isFull));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("오류가 발생하였습니다.");
         }
@@ -60,24 +61,25 @@ public class BoardControllerImpl implements BoardController {
     @Override
     @GetMapping("/board/search/{page}")
     public ResponseEntity<?> searchBoard(@PathVariable("page") int page, @RequestParam("category") String category, 
-            @RequestParam("type") String type, @RequestParam("keyword") String keyword) {
+            @RequestParam("type") String type, @RequestParam("keyword") String keyword, @RequestParam("isFull") boolean isFull) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(boardService.searchBoard(page, category, type, keyword));
+            return ResponseEntity.status(HttpStatus.OK).body(boardService.searchBoard(page, category, type, keyword, 
+                    isFull));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("오류가 발생하였습니다.");
         }
     }
 
-    @Override
-    @GetMapping("/board/view/recruiting/{page}")
-    public ResponseEntity<?> getRecruitingBoard(@PathVariable("page") int page,
-            @RequestParam("category") String category) {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(boardService.getRecruitingBoard(page, category));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("오류가 발생하였습니다.");
-        }
-    }
+    // @Override
+    // @GetMapping("/board/view/recruiting/{page}")
+    // public ResponseEntity<?> getRecruitingBoard(@PathVariable("page") int page,
+    //         @RequestParam("category") String category) {
+    //     try {
+    //         return ResponseEntity.status(HttpStatus.OK).body(boardService.getRecruitingBoard(page, category));
+    //     } catch (Exception e) {
+    //         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("오류가 발생하였습니다.");
+    //     }
+    // }
 
     @Override
     @PatchMapping("/board/{boardId}")

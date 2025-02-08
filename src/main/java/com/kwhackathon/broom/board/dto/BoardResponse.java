@@ -45,7 +45,7 @@ public class BoardResponse {
             this.title = board.getTitle();
             this.trainingDate = board.getTrainingDate();
             this.place = board.getPlace();
-            this.time = board.getTime().format(DateTimeFormatter.ofPattern("hh:mm"));
+            this.time = board.getTime().format(DateTimeFormatter.ofPattern("HH:mm"));
         }
     }
 
@@ -98,7 +98,7 @@ public class BoardResponse {
         private String formattingCreatedAt(LocalDateTime createdAt) {
             // 게시글 생성 일자가 오늘인 경우 작성 시간만 반환
             if (createdAt.toLocalDate().compareTo(LocalDate.now()) == 0) {
-                return createdAt.getHour() + ":" + createdAt.getMinute();
+                return createdAt.format(DateTimeFormatter.ofPattern("HH:mm"));
             }
 
             // 게시글 생성 일자가 올해인 경우 월/일 행태로 반환
