@@ -9,13 +9,13 @@ public interface BoardController {
     ResponseEntity<?> createBoard(WriteBoardDto writeBoardDto);
 
     // 모든 게시물 보기
-    ResponseEntity<?> getAllBoards(int page, String category);
+    ResponseEntity<?> getAllBoards(int page, String category, boolean isFull);
 
     // 게시물 검색
-    ResponseEntity<?> searchBoard(int page, String category, String type, String keyword);
+    ResponseEntity<?> searchBoard(int page, String category, String type, String keyword, boolean isFull);
 
     // 인원 모집이 진행 중인 게시물만 조회
-    ResponseEntity<?> getRecruitingBoard(int page, String category);
+    // ResponseEntity<?> getRecruitingBoard(int page, String category);
 
     // 단일 게시물 내용 조회
     ResponseEntity<?> getSingleBoardDetail(String boardId);

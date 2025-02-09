@@ -13,13 +13,13 @@ import jakarta.validation.Valid;
 public interface BoardService {
     BoardId createBoard(@Valid WriteBoardDto writeBoardDto);
 
-    BoardList getAllBoard(int page, String category);
+    BoardList getAllBoard(int page, String category, boolean isFull);
 
     SingleBoardDetail getSingleBoardDetail(String boardId);
 
-    BoardList searchBoard(int page, String category, String type, String keyword);
+    BoardList searchBoard(int page, String category, String type, String keyword, boolean isFull);
 
-    BoardList getRecruitingBoard(int page, String category);
+    // BoardList getRecruitingBoard(int page, String category);
 
     BoardList getMyBoard(int page, String category);
 

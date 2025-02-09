@@ -48,15 +48,25 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public BoardList getAllBoard(int page, String category) {
+    public BoardList getAllBoard(int page, String category, boolean isFull) {
         Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("createdAt").descending());
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
-        Slice<Board> slice = boardRepository.findSliceByCategory(pageable, Category.valueOf(category));
+
+        System.out.println(isFull);
+        Slice<Board> slice = getAllBoardByIsFull(pageable, category, isFull);
+        // boardRepository.findSliceByCategory(pageable, Category.valueOf(category));
         List<BoardListElement> elements = slice.getContent().stream()
                 .map((board) -> new BoardListElement(board, bookmarkRepository.existsByUserUserIdAndBoardBoardId(
                         userId, board.getBoardId())))
                 .collect(Collectors.toList());
         return new BoardList(elements, slice.hasNext());
+    }
+
+    private Slice<Board> getAllBoardByIsFull(Pageable pageable, String category, boolean isFull) {
+        if (isFull) {
+            return boardRepository.findSliceByCategory(pageable, Category.valueOf(category));
+        }
+        return boardRepository.findSliceByCategoryAndIsFull(pageable, Category.valueOf(category), false);
     }
 
     @Override
@@ -68,10 +78,10 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public BoardList searchBoard(int page, String category, String type, String keyword) {
+    public BoardList searchBoard(int page, String category, String type, String keyword, boolean isFull) {
         Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("createdAt").descending());
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
-        Slice<Board> slice = searchByCondition(pageable, category, type, keyword);
+        Slice<Board> slice = searchByCondition(pageable, category, type, keyword, isFull);
         List<BoardListElement> elements = slice.getContent().stream()
                 .map((board) -> new BoardListElement(board, bookmarkRepository.existsByUserUserIdAndBoardBoardId(
                         userId, board
@@ -80,32 +90,68 @@ public class BoardServiceImpl implements BoardService {
         return new BoardList(elements, slice.hasNext());
     }
 
-    private Slice<Board> searchByCondition(Pageable pageable, String category, String type, String keyword) {
+    private Slice<Board> searchByCondition(Pageable pageable, String category, String type, String keyword,
+            boolean isFull) {
         if (type.equals("title")) {
-            return boardRepository.findSliceByCategoryAndTitle(pageable, Category.valueOf(category), keyword);
+            // return boardRepository.findSliceByCategoryAndTitle(pageable, Category.valueOf(category), keyword);
+            return searchBoardByTitleAndIsFull(pageable, category, keyword, isFull);
         }
         if (type.equals("trainingDate")) {
-            return boardRepository.findSliceByCategoryAndTrainingDate(pageable, Category.valueOf(category),
-                    LocalDate.parse(keyword));
+            // return boardRepository.findSliceByCategoryAndTrainingDate(pageable, Category.valueOf(category),
+            //         LocalDate.parse(keyword));
+            return searchBoardByTrainingDateAndIsFull(pageable, category, keyword, isFull);
         }
         if (type.equals("place")) {
-            return boardRepository.findSliceByCategoryAndPlace(pageable, Category.valueOf(category), keyword);
+            // return boardRepository.findSliceByCategoryAndPlace(pageable, Category.valueOf(category), keyword);
+            return searchBoardByPlaceAndIsFull(pageable, category, keyword, isFull);
         }
         throw new IllegalArgumentException("올바른 검색조건이 아닙니다.");
     }
 
-    @Override
-    public BoardList getRecruitingBoard(int page, String category) {
-        Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("createdAt").descending());
-        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
-        Slice<Board> slice = boardRepository.findSliceByCategoryAndIsFull(pageable, Category.valueOf(category), false);
-        List<BoardListElement> elements = slice.getContent().stream()
-                .map((board) -> new BoardListElement(board, bookmarkRepository.existsByUserUserIdAndBoardBoardId(
-                        userId, board
-                                .getBoardId())))
-                .collect(Collectors.toList());
-        return new BoardList(elements, slice.hasNext());
+    private Slice<Board> searchBoardByTitleAndIsFull(Pageable pageable, String category, String keyword,
+            boolean isfull) {
+        if (isfull) {
+            return boardRepository.findSliceByCategoryAndTitle(pageable, Category.valueOf(category), keyword);
+        }
+        return boardRepository.findSliceByCategoryAndTitleAndIsFull(pageable, Category.valueOf(category), keyword,
+                isfull);
     }
+
+    private Slice<Board> searchBoardByTrainingDateAndIsFull(Pageable pageable, String category, String keyword,
+            boolean isfull) {
+        if (isfull) {
+            return boardRepository.findSliceByCategoryAndTrainingDate(pageable, Category.valueOf(category),
+                    LocalDate.parse(keyword));
+        }
+        return boardRepository.findSliceByCategoryAndTrainingDateAndIsFull(pageable, Category.valueOf(category),
+                LocalDate.parse(keyword), isfull);
+    }
+
+    private Slice<Board> searchBoardByPlaceAndIsFull(Pageable pageable, String category, String keyword,
+            boolean isfull) {
+        if (isfull) {
+            return boardRepository.findSliceByCategoryAndPlace(pageable, Category.valueOf(category), keyword);
+        }
+        return boardRepository.findSliceByCategoryAndPlaceAndIsFull(pageable, Category.valueOf(category), keyword,
+                isfull);
+    }
+
+    // @Override
+    // public BoardList getRecruitingBoard(int page, String category) {
+    // Pageable pageable = PageRequest.of(page, PAGE_SIZE,
+    // Sort.by("createdAt").descending());
+    // String userId =
+    // SecurityContextHolder.getContext().getAuthentication().getName();
+    // Slice<Board> slice = boardRepository.findSliceByCategoryAndIsFull(pageable,
+    // Category.valueOf(category), false);
+    // List<BoardListElement> elements = slice.getContent().stream()
+    // .map((board) -> new BoardListElement(board,
+    // bookmarkRepository.existsByUserUserIdAndBoardBoardId(
+    // userId, board
+    // .getBoardId())))
+    // .collect(Collectors.toList());
+    // return new BoardList(elements, slice.hasNext());
+    // }
 
     @Override
     public BoardList getMyBoard(int page, String category) {
