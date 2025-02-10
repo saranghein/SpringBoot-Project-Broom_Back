@@ -21,6 +21,8 @@ import com.kwhackathon.broom.board.entity.Board;
 import com.kwhackathon.broom.board.repository.BoardRepository;
 import com.kwhackathon.broom.board.util.category.Category;
 import com.kwhackathon.broom.bookmark.repository.BookmarkRepository;
+import com.kwhackathon.broom.participant.entity.Participant;
+import com.kwhackathon.broom.participant.repository.ParticipantRepository;
 import com.kwhackathon.broom.user.entity.User;
 import com.kwhackathon.broom.user.service.UserService;
 
@@ -33,6 +35,7 @@ import lombok.RequiredArgsConstructor;
 public class BoardServiceImpl implements BoardService {
     private final BoardRepository boardRepository;
     private final BookmarkRepository bookmarkRepository;
+    private final ParticipantRepository participantRepository;
     private final UserService userService;
     private final static int PAGE_SIZE = 15;
 
@@ -43,6 +46,7 @@ public class BoardServiceImpl implements BoardService {
         User user = userService.loadUserByUsername(userId);
         Board board = writeBoardDto.toEntity(user);
         boardRepository.save(board);
+        participantRepository.save(Participant.builder().unread(0L).user(user).board(board).build());
 
         return new BoardId(board.getBoardId());
     }
@@ -93,16 +97,19 @@ public class BoardServiceImpl implements BoardService {
     private Slice<Board> searchByCondition(Pageable pageable, String category, String type, String keyword,
             boolean isFull) {
         if (type.equals("title")) {
-            // return boardRepository.findSliceByCategoryAndTitle(pageable, Category.valueOf(category), keyword);
+            // return boardRepository.findSliceByCategoryAndTitle(pageable,
+            // Category.valueOf(category), keyword);
             return searchBoardByTitleAndIsFull(pageable, category, keyword, isFull);
         }
         if (type.equals("trainingDate")) {
-            // return boardRepository.findSliceByCategoryAndTrainingDate(pageable, Category.valueOf(category),
-            //         LocalDate.parse(keyword));
+            // return boardRepository.findSliceByCategoryAndTrainingDate(pageable,
+            // Category.valueOf(category),
+            // LocalDate.parse(keyword));
             return searchBoardByTrainingDateAndIsFull(pageable, category, keyword, isFull);
         }
         if (type.equals("place")) {
-            // return boardRepository.findSliceByCategoryAndPlace(pageable, Category.valueOf(category), keyword);
+            // return boardRepository.findSliceByCategoryAndPlace(pageable,
+            // Category.valueOf(category), keyword);
             return searchBoardByPlaceAndIsFull(pageable, category, keyword, isFull);
         }
         throw new IllegalArgumentException("올바른 검색조건이 아닙니다.");
@@ -111,9 +118,9 @@ public class BoardServiceImpl implements BoardService {
     private Slice<Board> searchBoardByTitleAndIsFull(Pageable pageable, String category, String keyword,
             boolean isfull) {
         if (isfull) {
-            return boardRepository.findSliceByCategoryAndTitle(pageable, Category.valueOf(category), keyword);
+            return boardRepository.findSliceByCategoryAndTitleContaining(pageable, Category.valueOf(category), keyword);
         }
-        return boardRepository.findSliceByCategoryAndTitleAndIsFull(pageable, Category.valueOf(category), keyword,
+        return boardRepository.findByCategoryAndIsFullAndTitleContaining(pageable, Category.valueOf(category), keyword,
                 isfull);
     }
 
@@ -123,16 +130,16 @@ public class BoardServiceImpl implements BoardService {
             return boardRepository.findSliceByCategoryAndTrainingDate(pageable, Category.valueOf(category),
                     LocalDate.parse(keyword));
         }
-        return boardRepository.findSliceByCategoryAndTrainingDateAndIsFull(pageable, Category.valueOf(category),
+        return boardRepository.findSliceByCategoryAndIsFullAndTrainingDate(pageable, Category.valueOf(category),
                 LocalDate.parse(keyword), isfull);
     }
 
     private Slice<Board> searchBoardByPlaceAndIsFull(Pageable pageable, String category, String keyword,
             boolean isfull) {
         if (isfull) {
-            return boardRepository.findSliceByCategoryAndPlace(pageable, Category.valueOf(category), keyword);
+            return boardRepository.findSliceByCategoryAndPlaceContaining(pageable, Category.valueOf(category), keyword);
         }
-        return boardRepository.findSliceByCategoryAndPlaceAndIsFull(pageable, Category.valueOf(category), keyword,
+        return boardRepository.findSliceByCategoryAndIsFullAndPlaceContaining(pageable, Category.valueOf(category), keyword,
                 isfull);
     }
 
