@@ -66,7 +66,7 @@ public class BoardControllerImpl implements BoardController {
             return ResponseEntity.status(HttpStatus.OK).body(boardService.searchBoard(page, category, type, keyword, 
                     isFull));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("오류가 발생하였습니다.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
