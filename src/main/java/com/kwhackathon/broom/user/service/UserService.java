@@ -50,10 +50,10 @@ public class UserService implements UserDetailsService {
     public boolean validateNickname(@Valid ValidateNicknameDto dto) {
         return userRepository.existsByNickname(dto.getNickname());
     }
-    
+
     public TokenDto reissue(Cookie[] cookies) {
         String refreshToken = validateRefresh(cookies);
-        
+
         String userId = jwtUtil.getUserId(refreshToken);
         String role = jwtUtil.getRole(refreshToken);
 
@@ -65,11 +65,8 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public void deleteUser(Cookie[] cookies) throws NullPointerException, ExpiredJwtException,
-            IllegalArgumentException {
-        String refresh = validateRefresh(cookies);
-                System.out.println(refresh);
-        String userId = jwtUtil.getUserId(refresh);
+    public void deleteUser() throws NullPointerException, IllegalArgumentException {
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
         userRepository.deleteByUserId(userId);
     }
 

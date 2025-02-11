@@ -54,7 +54,7 @@ public class UserController implements UserOperations {
         } catch (ConstraintViolationException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
-        return ResponseEntity.status(HttpStatus.OK).body("사용 가능한 이이디입니다");
+        return ResponseEntity.status(HttpStatus.OK).body("사용 가능한 아이디입니다");
     }
 
     @Override
@@ -88,9 +88,8 @@ public class UserController implements UserOperations {
     @DeleteMapping("/exit")
     public ResponseEntity<?> exit(HttpServletRequest request, HttpServletResponse response) {
         try {
-            userService.deleteUser(request.getCookies());
+            userService.deleteUser();
             response.addCookie(cookieGenerator.generateCookie("refresh", null, 0));
-            // response.addHeader(HttpHeaders.SET_COOKIE, createCookie(null, 0).toString());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
