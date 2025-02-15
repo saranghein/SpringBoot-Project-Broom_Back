@@ -12,6 +12,7 @@ public class UserResponse {
     public static class MypageInfoDto {
         private String nickname;
         private int reserveYear;
+        private MilitaryBranch militaryBranch;
     }
 
     @Data

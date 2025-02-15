@@ -105,7 +105,7 @@ public class UserService implements UserDetailsService {
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = loadUserByUsername(userId);
         int reserveYear = LocalDate.now().getYear() - user.getDischargeYear();
-        return new MypageInfoDto(user.getNickname(), reserveYear);
+        return new MypageInfoDto(user.getNickname(), reserveYear, user.getMilitaryBranch());
     }
 
     public UserInfoDto getUserInfo() {
