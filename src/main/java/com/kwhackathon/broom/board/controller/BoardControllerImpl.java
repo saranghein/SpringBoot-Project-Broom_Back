@@ -37,12 +37,11 @@ public class BoardControllerImpl implements BoardController {
 
     @Override
     @GetMapping("/board/view/all/{page}")
-    public ResponseEntity<?> getAllBoards(@PathVariable("page") int page, @RequestParam("category") String category, 
-            @RequestParam("isFull") boolean isFull) {
+    public ResponseEntity<?> getAllBoards(@PathVariable("page") int page, @RequestParam("recruiting") boolean recruiting) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(boardService.getAllBoard(page, category, isFull));
+            return ResponseEntity.status(HttpStatus.OK).body(boardService.getAllBoard(page, recruiting));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("오류가 발생하였습니다.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
@@ -60,26 +59,15 @@ public class BoardControllerImpl implements BoardController {
 
     @Override
     @GetMapping("/board/search/{page}")
-    public ResponseEntity<?> searchBoard(@PathVariable("page") int page, @RequestParam("category") String category, 
-            @RequestParam("type") String type, @RequestParam("keyword") String keyword, @RequestParam("isFull") boolean isFull) {
+    public ResponseEntity<?> searchBoard(@PathVariable("page") int page, @RequestParam("type") String type,
+            @RequestParam("keyword") String keyword, @RequestParam("recruiting") boolean recruiting) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(boardService.searchBoard(page, category, type, keyword, 
-                    isFull));
+            return ResponseEntity.status(HttpStatus.OK).body(boardService.searchBoard(page, type, keyword, 
+                    recruiting));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
-
-    // @Override
-    // @GetMapping("/board/view/recruiting/{page}")
-    // public ResponseEntity<?> getRecruitingBoard(@PathVariable("page") int page,
-    //         @RequestParam("category") String category) {
-    //     try {
-    //         return ResponseEntity.status(HttpStatus.OK).body(boardService.getRecruitingBoard(page, category));
-    //     } catch (Exception e) {
-    //         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("오류가 발생하였습니다.");
-    //     }
-    // }
 
     @Override
     @PatchMapping("/board/{boardId}")
@@ -111,26 +99,13 @@ public class BoardControllerImpl implements BoardController {
 
     @Override
     @GetMapping("/mypage/board/{page}")
-    public ResponseEntity<?> getMyBoard(@PathVariable("page") int page, @RequestParam("category") String category) {
+    public ResponseEntity<?> getMyBoard(@PathVariable("page") int page) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(boardService.getMyBoard(page, category));
+            return ResponseEntity.status(HttpStatus.OK).body(boardService.getMyBoard(page));
         } catch (NullPointerException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("오류가 발생하였습니다.");
         }
-    }
-
-    @Override
-    @PatchMapping("/board/check/{boardId}")
-    public ResponseEntity<?> checkIsFull(@PathVariable("boardId") String boardId) {
-        try {
-            boardService.updateIsFull(boardId);
-        } catch (NullPointerException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("오류가 발생하였습니다.");
-        }
-        return ResponseEntity.status(HttpStatus.OK).body("게시물의 상태가 변경되었습니다.");
     }
 }

@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import com.kwhackathon.broom.board.entity.Board;
-import com.kwhackathon.broom.board.util.category.Category;
 import com.kwhackathon.broom.user.entity.User;
 
 import jakarta.validation.constraints.NotBlank;
@@ -23,7 +22,6 @@ public class BoardRequest {
         private LocalTime time;
         private int personnel;
         private LocalDate trainingDate;
-        private Category category;
 
         public Board toEntity(User user) {
             return Board.builder()
@@ -33,7 +31,6 @@ public class BoardRequest {
                     .time(this.time)
                     .personnel(this.personnel)
                     .trainingDate(this.trainingDate)
-                    .category(this.category)
                     .user(user)
                     .build();
         }
