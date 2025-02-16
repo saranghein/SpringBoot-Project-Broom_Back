@@ -9,6 +9,7 @@ import com.kwhackathon.broom.board.entity.Board;
 import com.kwhackathon.broom.user.entity.User;
 import com.kwhackathon.broom.user.util.MilitaryBranch;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 public class BoardResponse {
@@ -65,20 +66,23 @@ public class BoardResponse {
     private static class Status {
         private String boardId;
         private String createdAt;
-        private boolean isFull;
+        private int currentPersonnel;
+        private int totalPersonnel;
         private boolean isBookmark;
 
         public Status(Board board, boolean isBookmark) {
             this.boardId = board.getBoardId();
             this.createdAt = board.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy/MM/dd hh:mm"));
-            this.isFull = board.isFull();
-            this.isBookmark = isBookmark; // 임시
+            this.currentPersonnel = board.getParticipants().size();
+            this.totalPersonnel = board.getPersonnel();
+            this.isBookmark = isBookmark;
         }
 
-        public Status(String boardId, String createdAt, boolean isFull, boolean isBookmark) {
+        public Status(String boardId, String createdAt, int currentPersonnel, int totalPersonnel, boolean isBookmark) {
             this.boardId = boardId;
             this.createdAt = createdAt;
-            this.isFull = isFull;
+            this.currentPersonnel = currentPersonnel;
+            this.totalPersonnel = totalPersonnel;
             this.isBookmark = isBookmark;
         }
     }
@@ -89,8 +93,9 @@ public class BoardResponse {
 
         private Content content;
 
-        public BoardListElement(Board board, boolean isBookmark) {
-            this.status = new Status(board.getBoardId(), formattingCreatedAt(board.getCreatedAt()), board.isFull(),
+        public BoardListElement(Board board, int participantCount, boolean isBookmark) {
+            this.status = new Status(board.getBoardId(), formattingCreatedAt(board.getCreatedAt()),
+                    participantCount, board.getPersonnel(),
                     isBookmark);
             this.content = new Content(board);
         }
@@ -135,5 +140,13 @@ public class BoardResponse {
             this.status = new Status(board, isBookmark);
             this.contentDetail = new ContentDetail(board);
         }
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class BoardWithBookmarkDto {
+        private Board board;
+        private int participantCount;
+        private boolean bookmarked;
     }
 }
