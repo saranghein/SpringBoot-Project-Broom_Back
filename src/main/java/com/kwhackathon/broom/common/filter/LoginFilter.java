@@ -6,12 +6,10 @@ import io.jsonwebtoken.io.IOException;
 
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kwhackathon.broom.common.dto.LoginResponseDto;
 import com.kwhackathon.broom.common.util.CookieGenerator;
 import com.kwhackathon.broom.common.util.JwtGenerator;
 import com.kwhackathon.broom.user.entity.User;
-import com.kwhackathon.broom.user.util.MilitaryChaplain;
+import com.kwhackathon.broom.user.util.MilitaryBranch;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -65,10 +63,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         // 로그인 성공 시 로그인 한 사용자의 닉네임, 군종을 반환
         User user = (User) authentication.getPrincipal();
         String nickname = user.getNickname();
-        MilitaryChaplain militaryChaplain = user.getMilitaryChaplain();
+        MilitaryBranch militaryBranch = user.getMilitaryBranch();
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        String userJsonResponse = objectMapper.writeValueAsString(new LoginResponseDto(nickname, militaryChaplain));
+        String userJsonResponse = "{\"nickname\" : \""+nickname+"\","+"\"militaryBranch\" : \""+militaryBranch+"\"}";
+        
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
         try (PrintWriter writer = response.getWriter()) {
