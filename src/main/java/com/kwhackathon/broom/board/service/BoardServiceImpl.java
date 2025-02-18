@@ -20,7 +20,6 @@ import com.kwhackathon.broom.board.dto.BoardResponse.BoardWithBookmarkDto;
 import com.kwhackathon.broom.board.dto.BoardResponse.SingleBoardDetail;
 import com.kwhackathon.broom.board.entity.Board;
 import com.kwhackathon.broom.board.repository.BoardRepository;
-import com.kwhackathon.broom.bookmark.repository.BookmarkRepository;
 import com.kwhackathon.broom.participant.entity.Participant;
 import com.kwhackathon.broom.participant.repository.ParticipantRepository;
 import com.kwhackathon.broom.user.entity.User;
@@ -31,11 +30,9 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-// 모든 반환 값에 북마크인지 아닌지 표시하기 위해 게시판 하나 마다 exist쿼리 하나 나가는데 이거 최적화 필요
 public class BoardServiceImpl implements BoardService {
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
-    private final BookmarkRepository bookmarkRepository;
     private final ParticipantRepository participantRepository;
     private final static int PAGE_SIZE = 15;
 
@@ -76,9 +73,9 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public SingleBoardDetail getSingleBoardDetail(String boardId) {
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
-        Board board = boardRepository.findById(boardId).orElseThrow(() -> new NullPointerException("존재하지 않는 게시물입니다."));
-        return new SingleBoardDetail(board.getUser(), board, bookmarkRepository.existsByUserUserIdAndBoardBoardId(
-                userId, board.getBoardId()));
+        BoardWithBookmarkDto boardWithBookmarkDto = boardRepository.findBoardWithBookmarkById(
+                userId, boardId).orElseThrow(() -> new NullPointerException("존재하지 않는 게시물입니다."));
+        return new SingleBoardDetail(boardWithBookmarkDto);
     }
 
     @Override
@@ -110,7 +107,7 @@ public class BoardServiceImpl implements BoardService {
 
     private Slice<BoardWithBookmarkDto> searchBoardByTitleAndRecruiting(Pageable pageable, String keyword, boolean recruiting, String userId) {
         if (recruiting) {
-            return boardRepository.findSliceByTitleContaining(pageable, keyword, userId);
+            return boardRepository.findByRecruitingAndTitleContaining(pageable, keyword, userId);
         }
         return boardRepository.findSliceByTitleContaining(pageable, keyword, userId);
     }
@@ -138,11 +135,13 @@ public class BoardServiceImpl implements BoardService {
         Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("createdAt").descending());
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        Slice<Board> slice = boardRepository.findSliceByUserUserId(pageable, userId);
+        System.out.println("======");
+        Slice<BoardWithBookmarkDto> slice = boardRepository.findSliceByUserUserId(pageable, userId);
         List<BoardListElement> elements = slice.getContent().stream()
-                .map((board) -> new BoardListElement(board, 1,bookmarkRepository.existsByUserUserIdAndBoardBoardId(
-                        userId, board
-                                .getBoardId())))
+                .map((boardWithBookmarkDto) -> new BoardListElement(
+                        boardWithBookmarkDto.getBoard(), 
+                        boardWithBookmarkDto.getParticipantCount(),
+                        boardWithBookmarkDto.isBookmarked()))
                 .collect(Collectors.toList());
         return new BoardList(elements, slice.hasNext());
     }
