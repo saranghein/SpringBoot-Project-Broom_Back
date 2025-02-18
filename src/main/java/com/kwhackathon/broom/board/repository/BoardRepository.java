@@ -10,40 +10,44 @@ import com.kwhackathon.broom.board.dto.BoardResponse.BoardWithBookmarkDto;
 import com.kwhackathon.broom.board.entity.Board;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 public interface BoardRepository extends JpaRepository<Board, String> {
-        // 카풀 또는 팀원 모집 게시글 전체 조회
-        // board를 조회할 때, participant의 수와 북마크 여부를 동시에 가져옴
+        // 게시글 전체 조회
         @Query("""
                         SELECT new com.kwhackathon.broom.board.dto.BoardResponse$BoardWithBookmarkDto(
-                                b, SIZE(b.participants), CASE WHEN COUNT(bm) > 0 THEN true ELSE false END
+                                b, SUM(CASE WHEN p.isExpelled = false THEN 1 ELSE 0 END), CASE WHEN COUNT(bm) > 0 THEN true ELSE false END
                         )
                         FROM Board b
+                        LEFT JOIN Participant p ON p.board.boardId = b.boardId
                         LEFT JOIN Bookmark bm ON bm.board.boardId = b.boardId AND bm.user.userId = :userId
                         GROUP BY b
                         """)
         Slice<BoardWithBookmarkDto> findSliceBoardWithBookmark(Pageable pageable,
                         @Param("userId") String userId);
 
-        // 카테고리별로 인원 모집이 진행 중인 게시글만 전체 조회
+        // 인원 모집이 진행 중인 게시글만 전체 조회
         @Query("""
                         SELECT new com.kwhackathon.broom.board.dto.BoardResponse$BoardWithBookmarkDto(
-                                b, SIZE(b.participants), CASE WHEN COUNT(bm) > 0 THEN true ELSE false END
+                                b, SUM(CASE WHEN p.isExpelled = false THEN 1 ELSE 0 END), CASE WHEN COUNT(bm) > 0 THEN true ELSE false END
                         )
                         FROM Board b
+                        LEFT JOIN Participant p ON p.board.boardId = b.boardId
                         LEFT JOIN Bookmark bm ON bm.board.boardId = b.boardId AND bm.user.userId = :userId
-                        WHERE SIZE(b.participants) < b.personnel
+
                         GROUP BY b
+                        HAVING SUM(CASE WHEN p.isExpelled = false THEN 1 ELSE 0 END) < b.personnel
                         """)
         Slice<BoardWithBookmarkDto> findSliceBoardWithBookmarkByRecruiting(Pageable pageable,
                         @Param("userId") String userId);
 
-        // 제목으로 카풀 또는 팀원 모집 게시글 검색
+        // 제목으로 게시글 검색
         @Query("""
                         SELECT new com.kwhackathon.broom.board.dto.BoardResponse$BoardWithBookmarkDto(
-                                b, SIZE(b.participants), CASE WHEN COUNT(bm) > 0 THEN true ELSE false END
+                                b, SUM(CASE WHEN p.isExpelled = false THEN 1 ELSE 0 END), CASE WHEN COUNT(bm) > 0 THEN true ELSE false END
                         )
                         FROM Board b
+                        LEFT JOIN Participant p ON p.board.boardId = b.boardId
                         LEFT JOIN Bookmark bm ON bm.board.boardId = b.boardId AND bm.user.userId = :userId
                         WHERE b.title LIKE %:title%
                         GROUP BY b
@@ -55,23 +59,26 @@ public interface BoardRepository extends JpaRepository<Board, String> {
         // 제목으로 검색 시 모집 중인 게시글만 조회
         @Query("""
                         SELECT new com.kwhackathon.broom.board.dto.BoardResponse$BoardWithBookmarkDto(
-                                b, SIZE(b.participants), CASE WHEN COUNT(bm) > 0 THEN true ELSE false END
+                                b, SUM(CASE WHEN p.isExpelled = false THEN 1 ELSE 0 END), CASE WHEN COUNT(bm) > 0 THEN true ELSE false END
                         )
                         FROM Board b
+                        LEFT JOIN Participant p ON p.board.boardId = b.boardId
                         LEFT JOIN Bookmark bm ON bm.board.boardId = b.boardId AND bm.user.userId = :userId
-                        WHERE SIZE(b.participants) < b.personnel AND b.title LIKE %:title%
+                        WHERE b.title LIKE %:title%
                         GROUP BY b
+                        HAVING SUM(CASE WHEN p.isExpelled = false THEN 1 ELSE 0 END) < b.personnel
                         """)
         Slice<BoardWithBookmarkDto> findByRecruitingAndTitleContaining(Pageable pageable,
                         @Param("title") String title,
                         @Param("userId") String userId);
 
-        // 훈련 날짜로 카풀 또는 팀원 모집 게시글 검색
+        // 훈련 날짜로 게시글 검색
         @Query("""
                         SELECT new com.kwhackathon.broom.board.dto.BoardResponse$BoardWithBookmarkDto(
-                                b, SIZE(b.participants), CASE WHEN COUNT(bm) > 0 THEN true ELSE false END
+                                b, SUM(CASE WHEN p.isExpelled = false THEN 1 ELSE 0 END), CASE WHEN COUNT(bm) > 0 THEN true ELSE false END
                         )
                         FROM Board b
+                        LEFT JOIN Participant p ON p.board.boardId = b.boardId
                         LEFT JOIN Bookmark bm ON bm.board.boardId = b.boardId AND bm.user.userId = :userId
                         WHERE b.trainingDate = :trainingDate
                         GROUP BY b
@@ -83,23 +90,26 @@ public interface BoardRepository extends JpaRepository<Board, String> {
         // 훈련 날짜로 검색 시 모집 중인 게시글만 조회
         @Query("""
                         SELECT new com.kwhackathon.broom.board.dto.BoardResponse$BoardWithBookmarkDto(
-                                b, SIZE(b.participants), CASE WHEN COUNT(bm) > 0 THEN true ELSE false END
+                                b, SUM(CASE WHEN p.isExpelled = false THEN 1 ELSE 0 END), CASE WHEN COUNT(bm) > 0 THEN true ELSE false END
                         )
                         FROM Board b
+                        LEFT JOIN Participant p ON p.board.boardId = b.boardId
                         LEFT JOIN Bookmark bm ON bm.board.boardId = b.boardId AND bm.user.userId = :userId
-                        WHERE SIZE(b.participants) < b.personnel AND b.trainingDate = :trainingDate
+                        WHERE b.trainingDate = :trainingDate
                         GROUP BY b
+                        HAVING SUM(CASE WHEN p.isExpelled = false THEN 1 ELSE 0 END) < b.personnel
                         """)
         Slice<BoardWithBookmarkDto> findSliceByRecruitingAndTrainingDate(Pageable pageable,
                         @Param("trainingDate") LocalDate trainingDate,
                         @Param("userId") String userId);
 
-        // 사용자 지정 장소로 카풀 또는 팀원 모집 게시글 검색
+        // 사용자 지정 장소로 게시글 검색
         @Query("""
                         SELECT new com.kwhackathon.broom.board.dto.BoardResponse$BoardWithBookmarkDto(
-                                b, SIZE(b.participants), CASE WHEN COUNT(bm) > 0 THEN true ELSE false END
+                                b, SUM(CASE WHEN p.isExpelled = false THEN 1 ELSE 0 END), CASE WHEN COUNT(bm) > 0 THEN true ELSE false END
                         )
                         FROM Board b
+                        LEFT JOIN Participant p ON p.board.boardId = b.boardId
                         LEFT JOIN Bookmark bm ON bm.board.boardId = b.boardId AND bm.user.userId = :userId
                         WHERE b.place LIKE %:place%
                         GROUP BY b
@@ -111,25 +121,64 @@ public interface BoardRepository extends JpaRepository<Board, String> {
         // 사용자 지정 장소로 검색 시 모집 중인 게시글만 조회
         @Query("""
                         SELECT new com.kwhackathon.broom.board.dto.BoardResponse$BoardWithBookmarkDto(
-                                b, SIZE(b.participants), CASE WHEN COUNT(bm) > 0 THEN true ELSE false END
+                                b, SUM(CASE WHEN p.isExpelled = false THEN 1 ELSE 0 END), CASE WHEN COUNT(bm) > 0 THEN true ELSE false END
                         )
                         FROM Board b
+                        LEFT JOIN Participant p ON p.board.boardId = b.boardId
                         LEFT JOIN Bookmark bm ON bm.board.boardId = b.boardId AND bm.user.userId = :userId
-                        WHERE SIZE(b.participants) < b.personnel AND b.place LIKE %:place%
+                        WHERE b.place LIKE %:place%
                         GROUP BY b
+                        HAVING SUM(CASE WHEN p.isExpelled = false THEN 1 ELSE 0 END) < b.personnel
                         """)
         Slice<BoardWithBookmarkDto> findSliceByRecruitingAndPlaceContaining(Pageable pageable,
                         @Param("place") String place,
                         @Param("userId") String userId);
 
         // 내가 작성한 게시글 조회하기
-        Slice<Board> findSliceByUserUserId(Pageable pageable, String userId);
+        @Query("""
+                        SELECT new com.kwhackathon.broom.board.dto.BoardResponse$BoardWithBookmarkDto(
+                                b, SUM(CASE WHEN p.isExpelled = false THEN 1 ELSE 0 END), CASE WHEN COUNT(bm) > 0 THEN true ELSE false END
+                        )
+                        FROM Board b
+                        LEFT JOIN Participant p ON p.board.boardId = b.boardId
+                        LEFT JOIN Bookmark bm ON bm.board.boardId = b.boardId AND bm.user.userId = :userId
+                        WHERE b.user.userId = :userId
+                        GROUP BY b
+                        """)
+        Slice<BoardWithBookmarkDto> findSliceByUserUserId(Pageable pageable, @Param("userId") String userId);
 
         // 내가 북마크로 등록한 게시글만 가져오기
-        @Query("SELECT b FROM Board b JOIN b.bookmarks bm WHERE bm.user.userId = :userId")
-        Slice<Board> findSliceByBookmarksUserUserId(Pageable pageable, @Param("userId") String userId);
+        @Query("""
+                        SELECT new com.kwhackathon.broom.board.dto.BoardResponse$BoardWithBookmarkDto(
+                                b, SUM(CASE WHEN p.isExpelled = false THEN 1 ELSE 0 END), CASE WHEN COUNT(bm) > 0 THEN true ELSE false END
+                        )
+                        FROM Board b
+                        LEFT JOIN Participant p ON p.board.boardId = b.boardId
+                        JOIN b.bookmarks bm WHERE bm.user.userId = :userId
+                        GROUP BY b
+                        """)
+        Slice<BoardWithBookmarkDto> findSliceByBookmarksUserUserId(Pageable pageable, @Param("userId") String userId);
 
-        // 내가 채팅 참여중인 게시글 가져오기
-        @Query("SELECT b FROM Board b JOIN b.participants p WHERE p.user.id = :userId")
-        Slice<Board> findSliceByParticipantsUserId(Pageable pageable, @Param("userId") String userId);
+        // 게시글에 채팅 참여 가능한 자리가 있는지 여부 반환
+        @Query("""
+                        SELECT CASE WHEN SUM(CASE WHEN p.isExpelled = false THEN 1 ELSE 0 END) > b.personnel THEN TRUE ELSE FALSE END
+                        FROM Board b
+                        LEFT JOIN Participant p ON p.board.boardId = b.boardId
+                        WHERE p.board.boardId = b.boardId AND b.id = :boardId
+                        """)
+        boolean existsEmptySeatByBoardId(@Param("boardId") String boardId);
+
+        // 단일 게시물 조회
+        @Query("""
+                        SELECT new com.kwhackathon.broom.board.dto.BoardResponse$BoardWithBookmarkDto(
+                                b, SUM(CASE WHEN p.isExpelled = false THEN 1 ELSE 0 END), CASE WHEN COUNT(bm) > 0 THEN true ELSE false END
+                        )
+                        FROM Board b
+                        LEFT JOIN Participant p ON p.board.boardId = b.boardId
+                        LEFT JOIN Bookmark bm ON bm.board.boardId = b.boardId AND bm.user.userId = :userId
+                        WHERE b.boardId = :boardId
+                        GROUP BY b
+                        """)
+        Optional<BoardWithBookmarkDto> findBoardWithBookmarkById(@Param("userId") String userId,
+                        @Param("boardId") String boardId);
 }

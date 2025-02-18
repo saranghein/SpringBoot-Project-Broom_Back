@@ -66,19 +66,19 @@ public class BoardResponse {
     private static class Status {
         private String boardId;
         private String createdAt;
-        private int currentPersonnel;
+        private Long currentPersonnel;
         private int totalPersonnel;
         private boolean isBookmark;
 
-        public Status(Board board, boolean isBookmark) {
+        public Status(Board board, Long currentPersonnel, boolean isBookmark) {
             this.boardId = board.getBoardId();
             this.createdAt = board.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy/MM/dd hh:mm"));
-            this.currentPersonnel = board.getParticipants().size();
+            this.currentPersonnel = currentPersonnel;
             this.totalPersonnel = board.getPersonnel();
             this.isBookmark = isBookmark;
         }
 
-        public Status(String boardId, String createdAt, int currentPersonnel, int totalPersonnel, boolean isBookmark) {
+        public Status(String boardId, String createdAt, Long currentPersonnel, int totalPersonnel, boolean isBookmark) {
             this.boardId = boardId;
             this.createdAt = createdAt;
             this.currentPersonnel = currentPersonnel;
@@ -93,7 +93,7 @@ public class BoardResponse {
 
         private Content content;
 
-        public BoardListElement(Board board, int participantCount, boolean isBookmark) {
+        public BoardListElement(Board board, Long participantCount, boolean isBookmark) {
             this.status = new Status(board.getBoardId(), formattingCreatedAt(board.getCreatedAt()),
                     participantCount, board.getPersonnel(),
                     isBookmark);
@@ -135,10 +135,10 @@ public class BoardResponse {
 
         private ContentDetail contentDetail;
 
-        public SingleBoardDetail(User user, Board board, boolean isBookmark) {
-            this.author = new Author(user);
-            this.status = new Status(board, isBookmark);
-            this.contentDetail = new ContentDetail(board);
+        public SingleBoardDetail(BoardWithBookmarkDto dto) {
+            this.author = new Author(dto.getBoard().getUser());
+            this.status = new Status(dto.getBoard(), dto.getParticipantCount(), dto.isBookmarked());
+            this.contentDetail = new ContentDetail(dto.getBoard());
         }
     }
 
@@ -146,7 +146,7 @@ public class BoardResponse {
     @AllArgsConstructor
     public static class BoardWithBookmarkDto {
         private Board board;
-        private int participantCount;
+        private Long participantCount;
         private boolean bookmarked;
     }
 }
