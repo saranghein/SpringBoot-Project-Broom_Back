@@ -40,7 +40,12 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public void createUser(@Valid SignupDto signupDto) {
-        userRepository.save(signupDto.toEntity(passwordEncoder));
+        User user = signupDto.toEntity(passwordEncoder);
+        if (userRepository.existsByUserId(user.getUserId()) || userRepository.existsByNickname(user.getNickname())) {
+            throw new IllegalArgumentException("이미 존재하는 사용자입니다.");
+        }
+        
+        userRepository.save(user);
     }
 
     public boolean validateId(@Valid ValidateIdDto dto) {
