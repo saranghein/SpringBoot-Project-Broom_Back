@@ -2,27 +2,21 @@ package com.kwhackathon.broom.user.entity;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.kwhackathon.broom.board.entity.Board;
-import com.kwhackathon.broom.bookmark.entity.Bookmark;
-import com.kwhackathon.broom.participant.entity.Participant;
 import com.kwhackathon.broom.user.dto.UserRequest.ChangeUserInfoDto;
 import com.kwhackathon.broom.user.util.MilitaryBranch;
 import com.kwhackathon.broom.user.util.Role;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,9 +24,10 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Builder(toBuilder = true)
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "user")
 public class User implements UserDetails {
     @Id
     @Column(name = "user_id", nullable = false)
@@ -54,15 +49,6 @@ public class User implements UserDetails {
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role; // 권한 정보
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<Board> boards;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<Bookmark> bookmarks;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<Participant> participants;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
