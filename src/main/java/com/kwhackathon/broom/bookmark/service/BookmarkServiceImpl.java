@@ -5,15 +5,17 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.kwhackathon.broom.board.dto.BoardResponse.BoardList;
 import com.kwhackathon.broom.board.dto.BoardResponse.BoardListElement;
+import com.kwhackathon.broom.board.dto.BoardResponse.BoardWithBookmarkDto;
 import com.kwhackathon.broom.board.entity.Board;
 import com.kwhackathon.broom.board.repository.BoardRepository;
-import com.kwhackathon.broom.board.util.category.Category;
 import com.kwhackathon.broom.bookmark.dto.BookmarkRequest.CreateDto;
 import com.kwhackathon.broom.bookmark.entity.Bookmark;
 import com.kwhackathon.broom.bookmark.repository.BookmarkRepository;
@@ -41,21 +43,26 @@ public class BookmarkServiceImpl implements BookmarkService {
             throw new IllegalArgumentException("이미 북마크로 등록된 게시물입니다.");
         }
 
-        User user = userRepository.findById(userId).orElseThrow(() -> new NullPointerException("올바른 사용자 정보가 아닙니다."));
-        Board board = boardRepository.findById(boardId).orElseThrow(() -> new NullPointerException("게시글이 존재하지 않습니다."));
+        // user와 board의 프록시 객체 생성
+        User user = userRepository.getReferenceById(userId);
+        Board board = boardRepository.getReferenceById(boardId);
 
         bookmarkRepository.save(Bookmark.builder().user(user).board(board).build());
     }
 
     @Override
-    public List<BoardListElement> getBookmark(int page, Category category) {
+    public BoardList getBookmark(int page) {
         Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("createdAt").descending());
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        return boardRepository.findSliceByBookmarksUserUserId(pageable, userId)
-                .stream()
-                .map((board) -> new BoardListElement(board, true))
+        Slice<BoardWithBookmarkDto> slice = boardRepository.findSliceByBookmarksUserUserId(pageable, userId);
+        List<BoardListElement> result = slice.getContent().stream()
+                .map((boardWithBookmarkDto) -> new BoardListElement(
+                        boardWithBookmarkDto.getBoard(), 
+                        boardWithBookmarkDto.getParticipantCount(),
+                        boardWithBookmarkDto.isBookmarked()))
                 .collect(Collectors.toList());
+        return new BoardList(result, slice.hasNext());
     }
 
     @Override
