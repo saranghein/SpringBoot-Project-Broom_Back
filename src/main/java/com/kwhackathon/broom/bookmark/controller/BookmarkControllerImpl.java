@@ -7,10 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.kwhackathon.broom.board.util.category.Category;
 import com.kwhackathon.broom.bookmark.dto.BookmarkRequest.CreateDto;
 import com.kwhackathon.broom.bookmark.service.BookmarkService;
 
@@ -36,9 +34,9 @@ public class BookmarkControllerImpl implements BookmarkController {
 
     @Override
     @GetMapping("/mypage/bookmark/{page}")
-    public ResponseEntity<?> getBookmark(@PathVariable("page") int page, @RequestParam("category") Category category) {
+    public ResponseEntity<?> getBookmark(@PathVariable("page") int page) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(bookmarkService.getBookmark(page,category));
+            return ResponseEntity.status(HttpStatus.OK).body(bookmarkService.getBookmark(page));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
