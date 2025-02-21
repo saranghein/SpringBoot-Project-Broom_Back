@@ -10,7 +10,6 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import com.kwhackathon.broom.board.dto.BoardRequest.WriteBoardDto;
 import com.kwhackathon.broom.bookmark.entity.Bookmark;
-import com.kwhackathon.broom.participant.entity.Participant;
 import com.kwhackathon.broom.user.entity.User;
 
 import jakarta.persistence.CascadeType;
@@ -67,9 +66,6 @@ public class Board {
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Bookmark> bookmarks;
-
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<Participant> participants;
 
     public void updateBoard(WriteBoardDto writeBoardDto) {
         this.title = writeBoardDto.getTitle();
