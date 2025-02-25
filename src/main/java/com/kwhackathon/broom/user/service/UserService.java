@@ -19,6 +19,7 @@ import com.kwhackathon.broom.user.dto.UserRequest.ValidateIdDto;
 import com.kwhackathon.broom.user.dto.UserRequest.ValidateNicknameDto;
 import com.kwhackathon.broom.user.dto.UserResponse.MypageInfoDto;
 import com.kwhackathon.broom.user.dto.UserResponse.TokenDto;
+import com.kwhackathon.broom.user.dto.UserResponse.UserCount;
 import com.kwhackathon.broom.user.dto.UserResponse.UserInfoDto;
 import com.kwhackathon.broom.user.entity.User;
 import com.kwhackathon.broom.user.repository.UserRepository;
@@ -134,5 +135,9 @@ public class UserService implements UserDetailsService {
             throw new IllegalArgumentException("기존 비밀번호가 일치하지 않습니다");
         }
         user.updatePassword(passwordEncoder.encode(dto.getNewPassword()));
+    }
+
+    public UserCount getTotalUserCount() {
+        return new UserCount(userRepository.countTotalUser());
     }
 }

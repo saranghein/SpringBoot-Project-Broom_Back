@@ -1,5 +1,5 @@
 package com.kwhackathon.broom.user.util;
 
 public enum Role {
-    ADMIN, MEMBER
+    ROLE_ADMIN, ROLE_MEMBER
 }

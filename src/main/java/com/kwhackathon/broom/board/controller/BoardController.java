@@ -25,4 +25,6 @@ public interface BoardController {
 
     // 내가 작성한 게시물 보기
     ResponseEntity<?> getMyBoard(int page);
+
+    ResponseEntity<?> getTotalBoardCount();
 }

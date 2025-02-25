@@ -181,4 +181,8 @@ public interface BoardRepository extends JpaRepository<Board, String> {
                         """)
         Optional<BoardWithBookmarkDto> findBoardWithBookmarkById(@Param("userId") String userId,
                         @Param("boardId") String boardId);
+
+        // 총 게시글의 수를 조회
+        @Query("SELECT COUNT(b) FROM Board b")
+        Long countTotalBoard();
 }

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.kwhackathon.broom.board.dto.BoardRequest.WriteBoardDto;
+import com.kwhackathon.broom.board.dto.BoardResponse.BoardCount;
 import com.kwhackathon.broom.board.dto.BoardResponse.BoardId;
 import com.kwhackathon.broom.board.dto.BoardResponse.BoardList;
 import com.kwhackathon.broom.board.dto.BoardResponse.BoardListElement;
@@ -166,5 +167,10 @@ public class BoardServiceImpl implements BoardService {
             throw new IllegalArgumentException("올바른 사용자가 아닙니다.");
         }
         boardRepository.deleteById(boardId);
+    }
+
+    @Override
+    public BoardCount getTotalBoardCount() {
+        return new BoardCount(boardRepository.countTotalBoard());
     }
 }

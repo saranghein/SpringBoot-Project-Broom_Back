@@ -5,6 +5,7 @@ import com.kwhackathon.broom.user.util.MilitaryBranch;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 
 public class UserResponse {
     @Data
@@ -33,5 +34,10 @@ public class UserResponse {
             this.dischargeYear = user.getDischargeYear();
             this.militaryBranch = user.getMilitaryBranch();
         }
+    }
+    @Getter
+    @AllArgsConstructor
+    public static class UserCount {
+        private Long userCount;
     }
 }
