@@ -149,4 +149,10 @@ public class BoardResponse {
         private Long participantCount;
         private boolean bookmarked;
     }
+
+    @Getter
+    @AllArgsConstructor
+    public static class BoardCount {
+        private Long boardCount;
+    }
 }

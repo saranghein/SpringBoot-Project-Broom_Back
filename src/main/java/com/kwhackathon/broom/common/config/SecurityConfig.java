@@ -29,63 +29,73 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final AuthenticationConfiguration authenticationConfiguration;
-    private final JwtUtil jwtUtil;
-    private final CookieGenerator cookieGenerator;
-    private final JwtGenerator jwtGenerator;
+        private final AuthenticationConfiguration authenticationConfiguration;
+        private final JwtUtil jwtUtil;
+        private final CookieGenerator cookieGenerator;
+        private final JwtGenerator jwtGenerator;
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        LoginFilter loginFilter = new LoginFilter(authenticationConfiguration.getAuthenticationManager(), 
-                jwtGenerator, 
-                cookieGenerator);
-        loginFilter.setFilterProcessesUrl("/login");
-        http.csrf((csrf) -> csrf.disable())
-                .formLogin((formLogin) -> formLogin.disable())
-                .logout((logout) -> logout.disable())
-                .httpBasic((httpBasic) -> httpBasic.disable())
-                .authorizeHttpRequests((authorizeRequest) -> authorizeRequest
-                        .requestMatchers("/", "/login", "/signup", "/validate-id", "/validate-nickname",
-                                "/reissue", "/exit", "/view/**", "/bus/**", "/chat/**")
-                        .permitAll()
-                        .anyRequest().authenticated())
-                .addFilterAt(
-                        loginFilter,
-                        UsernamePasswordAuthenticationFilter.class)
-                .addFilterAfter(new JwtFilter(jwtUtil), LoginFilter.class)
-                .addFilterAfter(new LogoutFilter(jwtUtil, 
-                        cookieGenerator), UsernamePasswordAuthenticationFilter.class)
-                .sessionManagement((session) -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .cors((cors) -> cors.configurationSource(corsConfigSource()));
-        return http.build();
-    }
-    
-    @Bean
-    public CorsConfigurationSource corsConfigSource() {
-        return new CorsConfigurationSource() {
-            @Override
-            public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-                CorsConfiguration configuration = new CorsConfiguration();
+        @Bean
+        public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+                LoginFilter loginFilter = new LoginFilter(authenticationConfiguration.getAuthenticationManager(),
+                                jwtGenerator,
+                                cookieGenerator);
+                loginFilter.setFilterProcessesUrl("/login");
+                http.csrf((csrf) -> csrf.disable())
+                                .formLogin((formLogin) -> formLogin.disable())
+                                .logout((logout) -> logout.disable())
+                                .httpBasic((httpBasic) -> httpBasic.disable())
+                                .authorizeHttpRequests((authorizeRequest) -> authorizeRequest
+                                                .requestMatchers("/", "/login", "/signup", "/validate-id",
+                                                                "/validate-nickname",
+                                                                "/reissue", "/exit", "/board/view/**",
+                                                                "/board/search/**", "/bus/**", "/chat/**", "/date-tag")
+                                                .permitAll()
+                                                .requestMatchers("/admin/**").hasRole("ADMIN")
+                                                .anyRequest().authenticated())
+                                .addFilterAt(
+                                                loginFilter,
+                                                UsernamePasswordAuthenticationFilter.class)
+                                .addFilterAfter(new JwtFilter(jwtUtil), LoginFilter.class)
+                                .addFilterAfter(new LogoutFilter(jwtUtil,
+                                                cookieGenerator), UsernamePasswordAuthenticationFilter.class)
+                                .sessionManagement((session) -> session
+                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                                .cors((cors) -> cors.configurationSource(corsConfigSource()));
+                return http.build();
+        }
 
-                // 허용 경로 설정
-                configuration.addAllowedOrigin("https://broom.life");
+        @Bean
+        public CorsConfigurationSource corsConfigSource() {
+                return new CorsConfigurationSource() {
+                        @Override
+                        public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+                                CorsConfiguration configuration = new CorsConfiguration();
 
-                // 허용 메서드 설정
-                configuration.setAllowedMethods(
-                        new ArrayList<>(List.of("GET", "POST", "PUT", "PATCH", "DELETE",
-                                "OPTIONS")));
+                                // 허용 경로 설정
+                                // configuration.addAllowedOrigin("https://broom.life");
+                                configuration.addAllowedHeader("*");
+                                configuration.addAllowedOrigin("https://www.kym1n.com");
+                                configuration.addAllowedOrigin(
+                                                "https://broom-git-version20-kimdonggyuns-projects.vercel.app");
 
-                // credentials 허용
-                configuration.setAllowCredentials(true);
+                                // Authorization 헤더를 응답에서 노출
+                                configuration.setExposedHeaders(List.of("Authorization"));
 
-                return configuration;
-            }
-        };
-    }
+                                // 허용 메서드 설정
+                                configuration.setAllowedMethods(
+                                                new ArrayList<>(List.of("GET", "POST", "PUT", "PATCH", "DELETE",
+                                                                "OPTIONS")));
 
-    @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+                                // credentials 허용
+                                configuration.setAllowCredentials(true);
+
+                                return configuration;
+                        }
+                };
+        }
+
+        @Bean
+        public BCryptPasswordEncoder bCryptPasswordEncoder() {
+                return new BCryptPasswordEncoder();
+        }
 }

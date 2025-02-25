@@ -108,4 +108,14 @@ public class BoardControllerImpl implements BoardController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("오류가 발생하였습니다.");
         }
     }
+
+    @Override
+    @GetMapping("/admin/board-count")
+    public ResponseEntity<?> getTotalBoardCount() {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(boardService.getTotalBoardCount());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
 }

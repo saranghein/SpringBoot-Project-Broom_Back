@@ -143,4 +143,14 @@ public class UserController implements UserOperations {
         }
         return ResponseEntity.status(HttpStatus.OK).body("비밀번호가 변경되었습니다");
     }
+
+    @Override
+    @GetMapping("/admin/user-count")
+    public ResponseEntity<?> getTotalUserCount() {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(userService.getTotalUserCount());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
 }

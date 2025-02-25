@@ -29,4 +29,6 @@ public interface UserOperations {
     ResponseEntity<?> updateUserInfo(ChangeUserInfoDto updateUserInfoDto);
 
     ResponseEntity<?> updatePassword(ChangePasswordDto updatePasswordDto);
+
+    ResponseEntity<?> getTotalUserCount();
 }

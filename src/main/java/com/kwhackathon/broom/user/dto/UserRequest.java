@@ -39,7 +39,7 @@ public class UserRequest {
                     .nickname(this.nickname)
                     .dischargeYear(this.dischargeYear)
                     .militaryBranch(this.militaryBranch)
-                    .role(Role.MEMBER).build();
+                    .role(Role.ROLE_MEMBER).build();
         }
     }
 
