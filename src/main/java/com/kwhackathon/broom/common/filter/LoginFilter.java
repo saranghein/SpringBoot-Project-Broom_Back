@@ -65,8 +65,9 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String nickname = user.getNickname();
         MilitaryBranch militaryBranch = user.getMilitaryBranch();
 
-        String userJsonResponse = "{\"nickname\" : \""+nickname+"\","+"\"militaryBranch\" : \""+militaryBranch+"\"}";
-        
+        String userJsonResponse = "{\"nickname\" : \"" + nickname + "\",\"militaryBranch\" : \"" + militaryBranch
+                + "\",\"role\" : \"" + role + "\"}";
+
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
         try (PrintWriter writer = response.getWriter()) {
