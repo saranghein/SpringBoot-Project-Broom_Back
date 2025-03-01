@@ -5,14 +5,11 @@ import org.springframework.http.ResponseEntity;
 import com.kwhackathon.broom.board.dto.BoardRequest.WriteBoardDto;
 
 public interface BoardController {
-    // 게시불 생성
+    // 게시물 생성
     ResponseEntity<?> createBoard(WriteBoardDto writeBoardDto);
 
-    // 모든 게시물 보기
-    ResponseEntity<?> getAllBoards(int page, boolean recruiting);
-
-    // 게시물 검색
-    ResponseEntity<?> searchBoard(int page, String type, String keyword, boolean recruiting);
+    // 조건에 따라 게시물 리스트 조회, 검색
+    ResponseEntity<?> getBoardByCondition(int page, String title, String place, String trainingDate, boolean recruiting);
 
     // 단일 게시물 내용 조회
     ResponseEntity<?> getSingleBoardDetail(String boardId);

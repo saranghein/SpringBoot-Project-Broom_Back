@@ -31,22 +31,28 @@ public class BoardControllerImpl implements BoardController {
         } catch (ConstraintViolationException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("오류가 발생하였습니다.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("게시글 생성에 실패했습니다.");
         }
     }
-
     @Override
-    @GetMapping("/board/view/all/{page}")
-    public ResponseEntity<?> getAllBoards(@PathVariable("page") int page, @RequestParam("recruiting") boolean recruiting) {
+    @GetMapping("/board/view/{page}")
+    public ResponseEntity<?> getBoardByCondition(
+            @PathVariable("page") int page,
+            @RequestParam(name = "title", required = false) String title,
+            @RequestParam(name = "place", required = false) String place,
+            @RequestParam(name = "trainingDate", required = false) String trainingDate,
+            @RequestParam(name = "recruiting", required = false) boolean recruiting) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(boardService.getAllBoard(page, recruiting));
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(boardService.getBoardByCondition(page, title, place, trainingDate, recruiting));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("error");
         }
     }
 
     @Override
-    @GetMapping("/board/view/{boardId}")
+    @GetMapping("/board/view/detail/{boardId}")
     public ResponseEntity<?> getSingleBoardDetail(@PathVariable("boardId") String boardId) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(boardService.getSingleBoardDetail(boardId));
@@ -58,20 +64,10 @@ public class BoardControllerImpl implements BoardController {
     }
 
     @Override
-    @GetMapping("/board/search/{page}")
-    public ResponseEntity<?> searchBoard(@PathVariable("page") int page, @RequestParam("type") String type,
-            @RequestParam("keyword") String keyword, @RequestParam("recruiting") boolean recruiting) {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(boardService.searchBoard(page, type, keyword, 
-                    recruiting));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-    }
-
-    @Override
     @PatchMapping("/board/{boardId}")
-    public ResponseEntity<?> editBoard(@PathVariable("boardId") String boardId, @RequestBody WriteBoardDto writeBoardDto) {
+    public ResponseEntity<?> editBoard(@PathVariable("boardId") String boardId,
+            @RequestBody WriteBoardDto writeBoardDto) {
+        // 게시글 수정에 실패했습니다. 로 바꾸기
         try {
             boardService.updateBoard(boardId, writeBoardDto);
         } catch (NullPointerException e) {
@@ -91,8 +87,12 @@ public class BoardControllerImpl implements BoardController {
     public ResponseEntity<?> deleteBoard(@PathVariable("boardId") String boardId) {
         try {
             boardService.deleteBoard(boardId);
+        } catch (NullPointerException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("오류가 발생하였습니다.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("게시글 삭제에 실패했습니다.");
         }
         return ResponseEntity.status(HttpStatus.OK).body("게시물이 삭제되였습니다.");
     }
