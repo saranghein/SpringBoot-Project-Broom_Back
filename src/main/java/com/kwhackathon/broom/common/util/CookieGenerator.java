@@ -12,6 +12,7 @@ public class CookieGenerator {
         cookie.setPath("/");
         cookie.setSecure(true);
         cookie.setHttpOnly(true);
+        cookie.setAttribute("SameSite", "None");
 
         return cookie;
     }
