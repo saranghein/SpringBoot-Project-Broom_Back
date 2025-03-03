@@ -37,4 +37,11 @@ public class JwtUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration()
                 .before(new Date());
     }
+
+    public boolean isValidAuthorization(String authorization){
+        if (authorization == null || !authorization.startsWith("bearer")) {
+            return false;
+        }
+        return true;
+    }
 }
