@@ -5,44 +5,44 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.kwhackathon.broom.bus.dto.request.CreateReservationDto;
-import com.kwhackathon.broom.bus.dto.response.ReservationBoolean;
-import com.kwhackathon.broom.bus.dto.response.ReservationInfoElement;
-import com.kwhackathon.broom.bus.dto.response.Reservations;
+import com.kwhackathon.broom.bus.dto.BusRequest.CreateReservationDto;
+import com.kwhackathon.broom.bus.dto.BusResponse.ReservationCount;
+import com.kwhackathon.broom.bus.dto.BusResponse.ReservationInfoDto;
+import com.kwhackathon.broom.bus.dto.BusResponse.ReservationInfoElement;
 import com.kwhackathon.broom.bus.entity.BusReservation;
 import com.kwhackathon.broom.bus.repository.BusReservationRepository;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class BusReservationService {
     private final BusReservationRepository busReservationRepository;
 
+    @Transactional
     public void createReservation(CreateReservationDto dto) {
-        busReservationRepository.save(BusReservation
-                .builder()
-                .name(dto.getName())
-                .studentId(dto.getStudentId())
-                .phoneNumber(dto.getPhoneNumber()).build());
+        busReservationRepository.save(dto.toEntity());
     }
 
-    public ReservationBoolean isReserved(String studentId) {
-        return new ReservationBoolean(busReservationRepository.existsByStudentId(studentId));
+    public ReservationInfoElement isReserved(String studentId) {
+        BusReservation busReservation = busReservationRepository.findByStudentId(studentId)
+                .orElseThrow(() -> new NullPointerException("예약정보가 존재하지 않습니다."));
+
+        return new ReservationInfoElement(busReservation);
     }
 
-    public Reservations getAllReservationInfo() {
+    public ReservationInfoDto getAllReservationInfo() {
         List<ReservationInfoElement> elements = new ArrayList<>();
         elements = busReservationRepository.findAll().stream()
-                .map(reservation -> new ReservationInfoElement(
-                        reservation.getBusReservationId(),
-                        reservation.getName(),
-                        reservation.getStudentId(),
-                        reservation.getPhoneNumber()))
+                .map(reservation -> new ReservationInfoElement(reservation))
                 .collect(Collectors.toList());
-        return new Reservations(elements);
+        return new ReservationInfoDto(elements);
+    }
+
+    public ReservationCount countReservation() {
+        return new ReservationCount(busReservationRepository.countTotalReservation());
     }
 }
