@@ -10,6 +10,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.kwhackathon.broom.common.util.JwtUtil;
@@ -22,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
+    private final UserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
@@ -52,9 +56,18 @@ public class JwtFilter extends OncePerRequestFilter {
         // 토큰에서 사용자 정보 추출
         String userId = jwtUtil.getUserId(accessToken);
         String role = jwtUtil.getRole(accessToken);
+        UserDetails user;
+        try {
+            user = userDetailsService.loadUserByUsername(userId); // ✅ `UserDetails`로 변환
+        } catch (UsernameNotFoundException e) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        Authentication authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+//        Authentication authToken = new UsernamePasswordAuthenticationToken(userId, null,
+//                List.of(new SimpleGrantedAuthority(role)));
 
-        Authentication authToken = new UsernamePasswordAuthenticationToken(userId, null, 
-                List.of(new SimpleGrantedAuthority(role)));
         // 세션에 토큰을 통해 사용자를 등록
         SecurityContextHolder.getContext().setAuthentication(authToken);
 

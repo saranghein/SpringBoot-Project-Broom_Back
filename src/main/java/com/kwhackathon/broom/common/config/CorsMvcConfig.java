@@ -9,7 +9,13 @@ public class CorsMvcConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("https://broom.life")
+                .allowedOrigins(
+                        "https://broom.life",
+                        "https://localhost:8080",
+                        "https://jiangxy.github.io",
+                        "https://www.broom.asia",
+                        "https://broom-git-version20-kimdonggyuns-projects.vercel.app"
+                )
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                 .allowedHeaders("Access-Control-Allow-Origin")
                 // .allowedHeaders("Access-Control-Allow-Credentials")
