@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -35,7 +36,7 @@ public class SecurityConfig {
         private final JwtGenerator jwtGenerator;
 
         @Bean
-        public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        public SecurityFilterChain filterChain(HttpSecurity http, UserDetailsService userDetailsService) throws Exception {
                 LoginFilter loginFilter = new LoginFilter(authenticationConfiguration.getAuthenticationManager(),
                                 jwtGenerator,
                                 cookieGenerator);
@@ -48,14 +49,17 @@ public class SecurityConfig {
                                                 .requestMatchers("/", "/login", "/signup", "/validate-id",
                                                                 "/validate-nickname",
                                                                 "/reissue", "/exit", "/board/view/**",
-                                                                "/board/search/**", "/bus/**", "/chat/**", "/date-tag")
+                                                                "/board/search/**", "/bus/**", "/chat/**", "/date-tag",
+                                                                "/swagger-ui/**","/index.html#/**"
+                                                )
                                                 .permitAll()
                                                 .requestMatchers("/admin/**").hasRole("ADMIN")
                                                 .anyRequest().authenticated())
-                                .addFilterAt(
+                        .addFilterBefore(new JwtFilter(jwtUtil, userDetailsService), UsernamePasswordAuthenticationFilter.class)
+                        .addFilterAt(
                                                 loginFilter,
                                                 UsernamePasswordAuthenticationFilter.class)
-                                .addFilterAfter(new JwtFilter(jwtUtil), LoginFilter.class)
+                                .addFilterAfter(new JwtFilter(jwtUtil,userDetailsService), LoginFilter.class)
                                 .addFilterAfter(new LogoutFilter(jwtUtil,
                                                 cookieGenerator), UsernamePasswordAuthenticationFilter.class)
                                 .sessionManagement((session) -> session
@@ -73,6 +77,10 @@ public class SecurityConfig {
 
                                 // 허용 경로 설정
                                 // configuration.addAllowedOrigin("https://broom.life");
+                                 configuration.addAllowedOrigin("https://www.broom.asia");
+                                configuration.addAllowedOrigin("https://localhost:8080");
+                                configuration.addAllowedOrigin("https://jiangxy.github.io");
+
                                 configuration.addAllowedHeader("*");
                                 configuration.addAllowedOrigin("https://www.kym1n.com");
                                 configuration.addAllowedOrigin(
