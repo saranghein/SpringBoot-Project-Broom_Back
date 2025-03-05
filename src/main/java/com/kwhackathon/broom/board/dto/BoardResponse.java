@@ -23,7 +23,7 @@ public class BoardResponse {
     }
 
     @Getter
-    private static class Author {
+    public static class Author {
         private String nickname;
         private int reserveYear;
         private MilitaryBranch militaryBranch;
@@ -36,7 +36,7 @@ public class BoardResponse {
     }
 
     @Getter
-    private static class Content {
+    public static class Content {
         private String title;
         private LocalDate trainingDate;
         private String place;
@@ -51,7 +51,7 @@ public class BoardResponse {
     }
 
     @Getter
-    private static class ContentDetail extends Content {
+    public static class ContentDetail extends Content {
         private String content;
         private int personnel;
 

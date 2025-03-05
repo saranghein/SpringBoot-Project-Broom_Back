@@ -22,10 +22,13 @@ bin/
 !**/src/test/**/bin/
 application.yml
 application-local.yml
-application-prod.yml
+application-pub.yml
 application.properties
 .DS_Store
-
+ChatMessageListener.java
+config
+RabbitmaConfig.java
+WebSocketConfig.java
 ### IntelliJ IDEA ###
 .idea
 *.iws
