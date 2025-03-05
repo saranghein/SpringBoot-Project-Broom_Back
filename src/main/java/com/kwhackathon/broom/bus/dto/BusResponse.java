@@ -3,6 +3,7 @@ package com.kwhackathon.broom.bus.dto;
 import java.util.List;
 
 import com.kwhackathon.broom.bus.entity.BusReservation;
+import com.kwhackathon.broom.bus.entity.BusReservationActivate;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,5 +35,15 @@ public class BusResponse {
     @AllArgsConstructor
     public static class ReservationCount {
         private Long reservationCount;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class ActivationDto {
+        private boolean isActivated;
+
+        public ActivationDto(BusReservationActivate busReservationActivate) {
+            this.isActivated = busReservationActivate.isActivated();
+        }
     }
 }

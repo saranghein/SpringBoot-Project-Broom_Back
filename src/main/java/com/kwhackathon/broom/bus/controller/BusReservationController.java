@@ -3,6 +3,7 @@ package com.kwhackathon.broom.bus.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -52,6 +53,26 @@ public class BusReservationController implements BusReservationOperators{
     public ResponseEntity<?> countAllReservation() {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(busReservationService.countReservation());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @Override
+    @GetMapping("/admin/bus/activate")
+    public ResponseEntity<?> getActivationStatus() {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(busReservationService.getActivationStatus());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @Override
+    @PatchMapping("/admin/bus/activate")
+    public ResponseEntity<?> updateActivationStatus() {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(busReservationService.updateActivationStatus());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
