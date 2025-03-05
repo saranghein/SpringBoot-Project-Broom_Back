@@ -24,6 +24,10 @@ application.yml
 application-local.yml
 application-pub.yml
 application.properties
+secure.properties
+pub.properties
+local.properties
+keystore.p12
 .DS_Store
 ChatMessageListener.java
 config
