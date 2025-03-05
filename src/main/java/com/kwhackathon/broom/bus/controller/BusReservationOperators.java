@@ -12,4 +12,8 @@ public interface BusReservationOperators {
     ResponseEntity<?> getAllReservationInfo();
 
     ResponseEntity<?> countAllReservation();
+
+    ResponseEntity<?> getActivationStatus();
+
+    ResponseEntity<?> updateActivationStatus();
 }
