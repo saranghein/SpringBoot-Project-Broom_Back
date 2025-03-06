@@ -21,13 +21,6 @@ public class DateTagControllerImpl implements DateTagController {
     private final DateTagService dateTagService;
 
     @Override
-    @GetMapping("/admin/service-status")
-    public ResponseEntity<?> getServiceStatus() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getServiceStatus'");
-    }
-
-    @Override
     @PostMapping("/admin/date-tag")
     public ResponseEntity<?> createTrainingDateTag(@RequestBody TrainingDateDto trainingDateDto) {
         try {
