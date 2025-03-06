@@ -19,6 +19,9 @@ public class DateTagServiceImpl implements DateTagService {
     @Override
     @Transactional
     public void createDateTag(TrainingDateDto trainingDateDto) {
+        if (dateTagRepository.existsByTrainingDate(trainingDateDto.getTrainingDate())) {
+            throw new IllegalArgumentException("이미 전재하는 날짜 태그입니다.");
+        }
         dateTagRepository.save(trainingDateDto.toEntity());
     }
 
