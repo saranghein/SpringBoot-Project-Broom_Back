@@ -1,5 +1,6 @@
 package com.kwhackathon.broom.chat.entity;
 
+import com.kwhackathon.broom.board.entity.Board;
 import com.kwhackathon.broom.participant.entity.Participant;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -33,4 +34,9 @@ public class Chat {
     @JoinColumn(name="participant_id",nullable = true)
     @ToString.Exclude // 순환 참조 방지
     private Participant participant;
+
+    // board 추가(단방향)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="board_id", nullable = false)
+    private Board board;
 }

@@ -42,13 +42,6 @@ public class ParticipantServiceImpl implements ParticipantService {
     public ParticipantResponse.ParticipantList getParticipantsByBoardId(String boardId) {
 
         // 참가자 조회
-//        List<Participant> participants = participantRepository.findByBoard_BoardId(boardId)
-//                .stream()
-//                .filter(participant -> !participant.getIsExpelled())
-//                        // isExpelled()가 false인 것만 필터링
-//                .toList();
-
-        // 참가자 조회
         List<Participant> participants=participantRepository.findActiveParticipantsByBoardId(boardId);
 
         // 작성자 조회
@@ -98,15 +91,10 @@ public class ParticipantServiceImpl implements ParticipantService {
 
     @Override
     public boolean isFull(String boardId) {
-        // 해당 게시판의 인원
-        Board board = boardRepository.findById(boardId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시판 없음: " + boardId));
 
         // 현재 인원
-        int size = participantRepository.findByBoard_BoardId(boardId).size();
+        return !boardRepository.existsEmptySeatByBoardId(boardId);
 
-        // 가득 찼다면
-        return size >= board.getPersonnel();
     }
 
     @Override
@@ -125,7 +113,7 @@ public class ParticipantServiceImpl implements ParticipantService {
 
     @Override
     public List<Participant> findParticipantsByBoardId(String boardId) {
-        return participantRepository.findByBoard_BoardId(boardId);
+        return participantRepository.findByBoard_BoardIdAndIsExpelledFalse(boardId);
     }
 
     @Override

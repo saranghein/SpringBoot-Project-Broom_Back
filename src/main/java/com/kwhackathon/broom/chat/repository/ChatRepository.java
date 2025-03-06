@@ -2,6 +2,7 @@ package com.kwhackathon.broom.chat.repository;
 
 import com.kwhackathon.broom.chat.entity.Chat;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -35,4 +36,6 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
     @Modifying
     @Query("UPDATE Chat c SET c.participant = NULL WHERE c.participant.id IN (SELECT p.id FROM Participant p WHERE p.user.userId = :userId AND p.board.boardId = :boardId)")
     void setParticipantToNull(@Param("userId") String userId, @Param("boardId") String boardId);
+
+    Page<Chat> findByBoard_BoardIdOrderByCreatedAtAsc(String boardId, PageRequest of);
 }

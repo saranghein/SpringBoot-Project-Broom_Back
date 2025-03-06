@@ -28,6 +28,7 @@ public interface ParticipantService {
 
     List<Participant> findParticipantsByBoardId(String boardId);
 
+
     boolean isAuthor(String boardId,String userId);
 
     void addExpellUserByBoardId(String expellId, String boardId);

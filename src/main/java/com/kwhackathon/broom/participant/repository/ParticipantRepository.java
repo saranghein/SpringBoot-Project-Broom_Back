@@ -35,6 +35,8 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
             "FROM Participant p " +
             "WHERE p.board.boardId = :boardId AND p.isExpelled = false")
     List<Participant> findActiveParticipantsByBoardId(@Param("boardId") String boardId);
+    // expelled == false 필터링
+    List<Participant> findByBoard_BoardIdAndIsExpelledFalse(String boardId);
 
     // 작성자 조회
 
