@@ -9,7 +9,7 @@ import java.util.List;
 public interface ChatService {
 
     // 메시지 저장
-    public Chat saveMessage(ChatRequest.Message messageDto,String senderId);
+    Chat saveMessage(ChatRequest.Message messageDto,String senderId);
     // 메시지 전송
     void sendMessageToRoom(ChatResponse.Message messageDto,String boardId);
     // 채팅 메시지 조회

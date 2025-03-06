@@ -63,4 +63,6 @@ public interface BoardRepository extends JpaRepository<Board, String>{
         // 총 게시글의 수를 조회
         @Query("SELECT COUNT(b) FROM Board b")
         Long countTotalBoard();
+
+    Board findByBoardId(String boardId);
 }

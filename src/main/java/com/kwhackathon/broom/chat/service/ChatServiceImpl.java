@@ -1,6 +1,8 @@
 package com.kwhackathon.broom.chat.service;
 
 import com.kwhackathon.broom.board.dto.BoardResponse;
+import com.kwhackathon.broom.board.entity.Board;
+import com.kwhackathon.broom.board.repository.BoardRepository;
 import com.kwhackathon.broom.board.service.BoardService;
 import com.kwhackathon.broom.chat.dto.ChatRequest;
 import com.kwhackathon.broom.chat.dto.ChatResponse;
@@ -26,7 +28,7 @@ public class ChatServiceImpl implements ChatService{
     private final RabbitTemplate rabbitTemplate;
     private final ParticipantService participantService;
     private final BoardService boardService;
-    private final UserService userService;
+    private final BoardRepository boardRepository;
 
     @Value("${broom.exchange-name}")
     private String EXCHANGE_NAME;
@@ -40,8 +42,8 @@ public class ChatServiceImpl implements ChatService{
 
         // Participant에서 user와 연결된 정보
         Participant participant=participantService.findByUserIdAndBoardId(senderId, messageDto.getBoardId());
-
-        Chat chat = ChatRequest.Message.toEntity(messageDto, participant);
+        Board board=boardRepository.findByBoardId(messageDto.getBoardId());
+        Chat chat = ChatRequest.Message.toEntity(messageDto, participant,board);
         chatRepository.save(chat);
 
         return chat;
@@ -66,7 +68,8 @@ public class ChatServiceImpl implements ChatService{
 
     @Override
     public ChatResponse.ChatRoomResponse getChatRoomInfo(String boardId,int page, int size) {
-        Page<Chat> chatPage = chatRepository.findByParticipant_Board_BoardIdOrderByCreatedAtAsc(boardId, PageRequest.of(page, size));
+//        Page<Chat> chatPage = chatRepository.findByParticipant_Board_BoardIdOrderByCreatedAtAsc(boardId, PageRequest.of(page, size));
+        Page<Chat> chatPage = chatRepository.findByBoard_BoardIdOrderByCreatedAtAsc(boardId, PageRequest.of(page, size));
 
         BoardResponse.SingleBoardDetail board = boardService.getSingleBoardDetail(boardId);
         List<Participant> participants = participantService.findParticipantsByBoardId(boardId);
