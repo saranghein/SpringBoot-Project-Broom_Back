@@ -17,12 +17,18 @@ public class BusResponse {
         private String studentId;
         private String phoneNumber;
 
-        public ReservationInfoElement(BusReservation busReservation){
+        public ReservationInfoElement(BusReservation busReservation) {
             this.reservationId = busReservation.getBusReservationId();
             this.name = busReservation.getName();
             this.studentId = busReservation.getStudentId();
             this.phoneNumber = busReservation.getPhoneNumber();
         }
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class IsReservedDto {
+        private boolean isReserved;
     }
 
     @Getter

@@ -9,10 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.kwhackathon.broom.bus.dto.BusRequest.CreateReservationDto;
 import com.kwhackathon.broom.bus.dto.BusResponse.ActivationDto;
+import com.kwhackathon.broom.bus.dto.BusResponse.IsReservedDto;
 import com.kwhackathon.broom.bus.dto.BusResponse.ReservationCount;
 import com.kwhackathon.broom.bus.dto.BusResponse.ReservationInfoDto;
 import com.kwhackathon.broom.bus.dto.BusResponse.ReservationInfoElement;
-import com.kwhackathon.broom.bus.entity.BusReservation;
 import com.kwhackathon.broom.bus.entity.BusReservationActivate;
 import com.kwhackathon.broom.bus.repository.BusReservationActivateRepository;
 import com.kwhackathon.broom.bus.repository.BusReservationRepository;
@@ -31,11 +31,11 @@ public class BusReservationService {
         busReservationRepository.save(dto.toEntity());
     }
 
-    public ReservationInfoElement isReserved(String studentId) {
-        BusReservation busReservation = busReservationRepository.findByStudentId(studentId)
-                .orElseThrow(() -> new NullPointerException("예약정보가 존재하지 않습니다."));
-
-        return new ReservationInfoElement(busReservation);
+    public IsReservedDto isReserved(String studentId) {
+        if (!busReservationRepository.existsByStudentId(studentId)) {
+            throw new NullPointerException("예약정보가 존재하지 않습니다.");
+        }
+        return new IsReservedDto(true);
     }
 
     public ReservationInfoDto getAllReservationInfo() {
