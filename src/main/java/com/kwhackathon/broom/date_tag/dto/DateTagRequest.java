@@ -13,12 +13,10 @@ public class DateTagRequest {
     public static class TrainingDateDto {
         private LocalDate trainingDate;
 
-
         public DateTag toEntity(){
             return DateTag.builder()
                     .trainingDate(this.trainingDate)
                     .build();
         }
     }
-
 }
