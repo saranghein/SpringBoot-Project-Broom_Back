@@ -60,10 +60,18 @@ public class LogoutFilter extends GenericFilterBean {
         // refresh토큰 null check, 만료 여부 check
         if (refresh == null || jwtUtil.isExpired(refresh)) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/plain; charset=UTF-8");
+            try (PrintWriter writer = response.getWriter()) {
+                writer.print("로그아웃에 실패했습니다");
+                writer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return;
         }
 
-        response.addCookie(cookieGenerator.generateCookie("refresh", refresh, 0));
+        response.addCookie(cookieGenerator.generateCookie("refresh", null, 0));
         
         response.setStatus(HttpServletResponse.SC_OK);
 
