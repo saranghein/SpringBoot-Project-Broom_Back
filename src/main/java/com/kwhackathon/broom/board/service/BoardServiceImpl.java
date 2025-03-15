@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.kwhackathon.broom.chat.config.RabbitmqConfig;
+import com.kwhackathon.broom.chat.service.ChatRoomService;
+import com.kwhackathon.broom.chat.service.ChatService;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -39,8 +41,7 @@ public class BoardServiceImpl implements BoardService {
     private final BoardSearchRepository boardSearchRepository;
     private final ParticipantRepository participantRepository;
     private final static int PAGE_SIZE = 15;
-    private final AmqpAdmin amqpAdmin; // AmqpAdmin을 주입
-    private final RabbitmqConfig rabbitmqConfig;
+    private final ChatRoomService chatRoomService;
 
     @Override
     @Transactional
@@ -52,8 +53,7 @@ public class BoardServiceImpl implements BoardService {
         boardRepository.save(board);
         Participant participant = new Participant(null, 0L, user, board,false,null);
         participantRepository.save(participant);
-        // 🛠 채팅방이 생성될 때 RabbitMQ 동적 큐도 생성
-        rabbitmqConfig.createChatRoomQueue(board.getBoardId(),amqpAdmin);
+        chatRoomService.createChatRoom(board.getBoardId()); // 채팅방이 생성될 때 RabbitMQ 동적 큐도 생성
         return new BoardId(board.getBoardId());
     }
 
@@ -115,8 +115,9 @@ public class BoardServiceImpl implements BoardService {
         if (!board.getUser().getUserId().equals(userId)) {
             throw new IllegalArgumentException("작성자만 삭제할 수 있습니다.");
         }
+        chatRoomService.deleteChatRoom(boardId);
         boardRepository.deleteById(boardId);
-        // 큐 삭제 필요
+
     }
 
     @Override

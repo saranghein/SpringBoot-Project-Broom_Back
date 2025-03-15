@@ -85,7 +85,7 @@ public class ChatControllerImpl implements ChatController {
 
             // 참가자가 아니라면
             if (participant == null) {
-                System.out.println("🚨 [Error] 채팅방 참가자 정보 없음: userId=" + senderId + ", boardId=" + messageDto.getBoardId());
+                System.out.println("[Error] 채팅방 참가자 정보 없음: userId=" + senderId + ", boardId=" + messageDto.getBoardId());
                 throw new IllegalStateException("채팅방에 참가하지 않았습니다.");
             }
 
@@ -95,18 +95,13 @@ public class ChatControllerImpl implements ChatController {
                 // TODO:고민필요
             }
 
-//            chatService.sendMessageToQueue(messageDto,senderId);
             chatMessageProducer.sendMessage(messageDto, senderId);
 
-//            Chat savedChat =chatService.saveMessage(messageDto,senderId); // 메시지 저장
-//            ChatResponse.Message responseMessage = ChatResponse.Message.fromEntity(savedChat);
-//            chatService.sendMessageToRoom(responseMessage,messageDto.getBoardId());
-
         }catch (IllegalStateException e) {
-            System.out.println("🚨 [Error] " + e.getMessage());
+            System.out.println("[Error] " + e.getMessage());
             throw e;
         } catch (Exception e) {
-            System.out.println("🚨 [Unexpected Error] " + e.getMessage());
+            System.out.println("[Unexpected Error] " + e.getMessage());
             throw new IllegalStateException("잘못된 접근입니다.");
         }
     }

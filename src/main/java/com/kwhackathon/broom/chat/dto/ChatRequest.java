@@ -5,13 +5,14 @@ import com.kwhackathon.broom.chat.entity.Chat;
 import com.kwhackathon.broom.participant.entity.Participant;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 
 public class ChatRequest {
-    @Data
+    @Getter
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Message{
