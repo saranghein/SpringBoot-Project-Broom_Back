@@ -24,11 +24,10 @@ public class DateTagControllerImpl implements DateTagController {
     @PostMapping("/admin/date-tag")
     public ResponseEntity<?> createTrainingDateTag(@RequestBody TrainingDateDto trainingDateDto) {
         try {
-            dateTagService.createDateTag(trainingDateDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(dateTagService.createDateTag(trainingDateDto));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body("날짜 태그가 생성되었습니다.");
     }
 
     @Override

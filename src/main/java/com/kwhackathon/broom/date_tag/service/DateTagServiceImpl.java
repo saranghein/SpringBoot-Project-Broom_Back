@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.kwhackathon.broom.date_tag.dto.DateTagRequest.TrainingDateDto;
+import com.kwhackathon.broom.date_tag.dto.DateTagResponse.TrainingDateElement;
 import com.kwhackathon.broom.date_tag.dto.DateTagResponse.TrainingDateList;
 import com.kwhackathon.broom.date_tag.entity.DateTag;
 import com.kwhackathon.broom.date_tag.repository.DateTagRepository;
@@ -18,11 +19,12 @@ public class DateTagServiceImpl implements DateTagService {
 
     @Override
     @Transactional
-    public void createDateTag(TrainingDateDto trainingDateDto) {
+    public TrainingDateElement createDateTag(TrainingDateDto trainingDateDto) {
         if (dateTagRepository.existsByTrainingDate(trainingDateDto.getTrainingDate())) {
-            throw new IllegalArgumentException("이미 전재하는 날짜 태그입니다.");
+            throw new IllegalArgumentException("이미 존재하는 날짜 태그입니다.");
         }
-        dateTagRepository.save(trainingDateDto.toEntity());
+
+        return new TrainingDateElement(dateTagRepository.save(trainingDateDto.toEntity()));
     }
 
     @Override
@@ -42,5 +44,4 @@ public class DateTagServiceImpl implements DateTagService {
     public void deleteDateTag(Long tagId) {
         dateTagRepository.deleteById(tagId);
     }
-    
 }

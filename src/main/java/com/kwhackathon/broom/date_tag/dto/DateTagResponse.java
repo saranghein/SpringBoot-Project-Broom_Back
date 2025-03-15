@@ -18,17 +18,21 @@ public class DateTagResponse {
 
         public TrainingDateList(List<DateTag> tags) {
             this.dates = tags.stream()
-                    .map((tag) -> new TrainingDateElement(tag.getDateTagId(), tag.getTrainingDate()
-                            .format(DateTimeFormatter.ofPattern(
-                                    "yyyy.MM.dd"))))
+                    .map((tag) -> new TrainingDateElement(tag))
                     .collect(Collectors.toList());
         }
     }
 
     @Getter
     @AllArgsConstructor
-    private static class TrainingDateElement {
+    public static class TrainingDateElement {
         private Long id;
         private String trainingDate;
+
+        public TrainingDateElement(DateTag dateTag) {
+            this.id = dateTag.getDateTagId();
+            this.trainingDate = dateTag.getTrainingDate().format(DateTimeFormatter.ofPattern(
+                                    "yyyy.MM.dd"));
+        }
     }
 }
