@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 public class ChatErrorResponse {
     @Data
     @AllArgsConstructor
-    @NoArgsConstructor
     public static class ErrorResponse {
 
     }

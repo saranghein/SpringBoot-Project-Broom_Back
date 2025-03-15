@@ -25,8 +25,9 @@ public class ParticipantControllerImpl implements ParticipantController {
     // 해당 채팅방의 참여자 목록 조회
     @Override
     @GetMapping("/participant/{boardId}")
-    public ResponseEntity<?> getParticipantsByBoardId(@PathVariable String boardId,@RequestParam(defaultValue = "0") int page) {
-
+    public ResponseEntity<?> getParticipantsByBoardId(
+            @PathVariable String boardId,
+            @RequestParam(defaultValue = "0") int page) {
         try{
             return ResponseEntity.status(HttpStatus.OK)
                     .body(participantService.getParticipantsByBoardId(boardId));
@@ -63,7 +64,9 @@ public class ParticipantControllerImpl implements ParticipantController {
     // CASE2: 사용자가 들어가서 강퇴되었다는 걸 확인하고 버튼을 눌렀다면
     @Override
     @DeleteMapping("/exit/{boardId}")
-    public ResponseEntity<?> deleteParticipantByBoardIdAndUserId(@PathVariable String boardId, @AuthenticationPrincipal User user){
+    public ResponseEntity<?> deleteParticipantByBoardIdAndUserId(
+            @PathVariable String boardId,
+            @AuthenticationPrincipal User user){
         try{
             // 방장이라면
             if(participantService.isAuthor(boardId,user.getUserId())){
@@ -89,7 +92,9 @@ public class ParticipantControllerImpl implements ParticipantController {
     // 강퇴 버튼을 누르면(강퇴 요청)
     @Override
     @PatchMapping("/expell/request")
-    public ResponseEntity<?> expellRequire(@RequestBody ParticipantRequest.ExpellRequestInfo requestBody, @AuthenticationPrincipal User user) {
+    public ResponseEntity<?> expellRequire(
+            @RequestBody ParticipantRequest.ExpellRequestInfo requestBody,
+            @AuthenticationPrincipal User user) {
         try{
             String boardId = requestBody.getBoardId();
 
