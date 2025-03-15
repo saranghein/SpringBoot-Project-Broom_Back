@@ -38,6 +38,17 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
     // expelled == false 필터링
     List<Participant> findByBoard_BoardIdAndIsExpelledFalse(String boardId);
 
+
+    @Query("""
+        SELECT p FROM Participant p 
+        LEFT JOIN p.board b 
+        LEFT JOIN Chat c ON c.board = b 
+        WHERE p.user = :user
+        GROUP BY p
+        ORDER BY MAX(c.createdAt) DESC
+    """)
+    Page<Participant> findParticipantsByUserOrderByLatestChatTime(@Param("user") User user, Pageable pageable);
+
     // 작성자 조회
 
     // 작성자 외 참가자 최적화

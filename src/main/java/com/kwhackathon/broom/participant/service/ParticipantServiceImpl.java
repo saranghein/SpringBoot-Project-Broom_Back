@@ -141,10 +141,13 @@ public class ParticipantServiceImpl implements ParticipantService {
 
     @Override
     public ParticipantResponse.ChatRoomList getChatRoomListByUser(User user, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id")); // 페이지네이션 적용
+        Pageable pageable = PageRequest.of(page, size); // 페이지네이션 적용
 
         // 유저가 참여한 채팅방 목록을 가져옴
-        Page<Participant> participantPage = participantRepository.findByUser(user, pageable);
+//        Page<Participant> participantPage = participantRepository.findByUser(user, pageable);
+
+        // 최신 메시지 기준 정렬된 채팅방 목록 가져오기
+        Page<Participant> participantPage = participantRepository.findParticipantsByUserOrderByLatestChatTime(user, pageable);
 
 
         // 각 채팅방의 최신 메시지 가져와서 DTO 변환

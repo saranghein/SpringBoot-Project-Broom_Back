@@ -1,11 +1,13 @@
 package com.kwhackathon.broom.chat.component;
 
+import com.kwhackathon.broom.chat.config.RabbitmqConfig;
 import com.kwhackathon.broom.chat.dto.ChatErrorResponse;
 import com.kwhackathon.broom.chat.dto.ChatRequest;
 import com.kwhackathon.broom.chat.dto.ChatResponse;
 import com.kwhackathon.broom.chat.entity.Chat;
 import com.kwhackathon.broom.chat.service.ChatService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.Message;
@@ -13,6 +15,7 @@ import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 
@@ -20,13 +23,13 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class ChatMessageProducer {//메시지를 RabbitMQ로 전송
     private final RabbitTemplate rabbitTemplate;
-    private final SimpMessagingTemplate simpMessagingTemplate;
     @Value("${broom.exchange-name}")
     private String EXCHANGE_NAME;
     @Value("${broom.routing-prefix}")
     private String ROUTING_KEY_PREFIX;
     private final ChatService chatService;
 
+    @Transactional
     public void sendMessage(ChatRequest.Message messageDto, String senderId) {
         // 메시지 DB 저장
         Chat savedChat = chatService.saveMessage(messageDto, senderId);

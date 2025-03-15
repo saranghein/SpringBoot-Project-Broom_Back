@@ -12,7 +12,7 @@ public interface ParticipantController {
     // 해당 유저의 채팅방 목록 조회
     ResponseEntity<?> getBoardByUserId(User user,int page,int size);
 
-    // 해당 채팅방의 참여자 삭제 (채팅방 나가기-방장이 아닌경우!)
+    // 해당 채팅방의 참여자 삭제 (채팅방 나가기-방장이 아닌경우)
     ResponseEntity<?> deleteParticipantByBoardIdAndUserId(String boardId, User user);
 
     // 강퇴요청
