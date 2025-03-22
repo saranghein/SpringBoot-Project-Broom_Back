@@ -35,6 +35,7 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
             "FROM Participant p " +
             "WHERE p.board.boardId = :boardId AND p.isExpelled = false")
     List<Participant> findActiveParticipantsByBoardId(@Param("boardId") String boardId);
+
     // expelled == false 필터링
     List<Participant> findByBoard_BoardIdAndIsExpelledFalse(String boardId);
 
@@ -48,6 +49,21 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
         ORDER BY MAX(c.createdAt) DESC
     """)
     Page<Participant> findParticipantsByUserOrderByLatestChatTime(@Param("user") User user, Pageable pageable);
+
+    // 사용자가 참여중인 채팅방 목록 가져오기
+//    @Query("""
+//                SELECT new com.kwhackathon.broom.chatting.dto.ChatMessageResponse$ChatRoomElement(
+//                    p.board.boardId, p.board.title, COALESCE(cm.message, ''), cm.createdAt, p.unread
+//                )
+//                FROM Participant p
+//                LEFT JOIN p.chatMessages cm
+//                WHERE p.user.id = :userId
+//                AND (cm.createdAt IS NULL OR cm.createdAt = (
+//                    SELECT MAX(cm2.createdAt) FROM ChatMessage cm2 WHERE cm2.participant = p
+//                ))
+//                ORDER BY cm.createdAt DESC
+//            """)
+//    Slice<ChatRoomElement> findChatRoomsByUserId(Pageable pageable, @Param("userId") String userId);
 
     // 작성자 조회
 
