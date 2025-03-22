@@ -50,6 +50,7 @@ public class ParticipantResponse {
             );
         }
     }
+
     @Getter
     @AllArgsConstructor
     public static class ChatRoomElement {
@@ -57,9 +58,7 @@ public class ParticipantResponse {
         private String boardName;
         private String lastMessage;
         private boolean isExpelled;
-
         private String lastMessageTime;
-
         private List<String> militaryBranches;
 
         // Participant , Chat -> ChatRoomElement
@@ -85,8 +84,6 @@ public class ParticipantResponse {
     public static class ChatRoomList {
         private List<ChatRoomElement> chatRooms;
         private boolean hasNext;
-
-
 
     }
 }

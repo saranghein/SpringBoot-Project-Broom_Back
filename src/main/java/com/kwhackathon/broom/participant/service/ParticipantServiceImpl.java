@@ -149,7 +149,6 @@ public class ParticipantServiceImpl implements ParticipantService {
         // 최신 메시지 기준 정렬된 채팅방 목록 가져오기
         Page<Participant> participantPage = participantRepository.findParticipantsByUserOrderByLatestChatTime(user, pageable);
 
-
         // 각 채팅방의 최신 메시지 가져와서 DTO 변환
         List<ParticipantResponse.ChatRoomElement> chatRooms = participantPage.getContent().stream()
                 .map(participant -> {

@@ -68,11 +68,13 @@ public class Board {
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Bookmark> bookmarks;
+
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Chat> chats;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Participant> participants;
+
     public void updateBoard(WriteBoardDto writeBoardDto) {
         this.title = writeBoardDto.getTitle();
         this.content = writeBoardDto.getContent();
