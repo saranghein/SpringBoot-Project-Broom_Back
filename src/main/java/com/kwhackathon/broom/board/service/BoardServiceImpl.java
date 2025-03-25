@@ -1,11 +1,13 @@
 package com.kwhackathon.broom.board.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.kwhackathon.broom.chat.config.RabbitmqConfig;
 import com.kwhackathon.broom.chat.service.ChatRoomService;
 import com.kwhackathon.broom.chat.service.ChatService;
+
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -123,5 +125,23 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public BoardCount getTotalBoardCount() {
         return new BoardCount(boardRepository.countTotalBoard());
+    }
+
+    @Override
+    public BoardList getAlmostFullBoard() {
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7L);
+        
+        Slice<BoardWithBookmarkDto> slice = boardRepository.findAlmostFullBoardEachDates(pageable, 
+                userId, sevenDaysAgo);
+
+        List<BoardListElement> elements = slice.getContent().stream()
+                .map((boardWithBookmark) -> new BoardListElement(boardWithBookmark.getBoard(),
+                        boardWithBookmark.getParticipantCount(), boardWithBookmark.isBookmarked()))
+                .collect(Collectors.toList());
+        return new BoardList(elements, slice.hasNext());
     }
 }

@@ -24,4 +24,7 @@ public interface BoardController {
     ResponseEntity<?> getMyBoard(int page);
 
     ResponseEntity<?> getTotalBoardCount();
+
+    // 최근 7일 내에 작성된 글 중에 남은 모집 인원이 가장 적은 글을 날짜 태그 맞는 날짜로 가져오기
+    ResponseEntity<?> getAlmostFull();
 }

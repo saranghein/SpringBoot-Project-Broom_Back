@@ -26,4 +26,6 @@ public interface BoardService {
     void deleteBoard(String boardId);
 
     BoardCount getTotalBoardCount();
+
+    BoardList getAlmostFullBoard();
 }

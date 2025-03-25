@@ -118,4 +118,14 @@ public class BoardControllerImpl implements BoardController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
+
+    @Override
+    @GetMapping("/board/view/almost-full")
+    public ResponseEntity<?> getAlmostFull() {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(boardService.getAlmostFullBoard());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
 }
