@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,8 +29,9 @@ public class ChatResponse {
         @JsonProperty("expelled") // JSON의 "expelled" 필드를 isExpelled와 매핑
         private boolean isExpelled;      // 강퇴 여부
 
-        // Chat -> Response.Message
+        // Chat -> Response.Message (정상 응답)
         public static Message fromEntity(Chat chat, String boardId) {
+
             return new Message(
                     boardId,
                     chat.getMessage(),
@@ -46,6 +48,19 @@ public class ChatResponse {
                     (chat.getParticipant() != null) ? chat.getParticipant().getIsExpelled() : false
             );
         }
+        // 오류 발생 시 메시지 생성
+//        public static Message createErrorMessage(String errorStatus, int errorCode, String nickname) {
+//            return new Message(
+//                    "", // boardId
+//                    "", // message
+//                    nickname, // 오류 발생한 유저의 닉네임
+//                    LocalDateFormatter.CreatedAt.formattingCreatedAt(LocalDateTime.now()), // 발행 시간
+//                    "", // militaryBranch
+//                    0, // dischargeYear
+//                    false, // expelled
+//                    new ChatErrorResponse.ErrorResponse(errorStatus, errorCode) // 오류 정보 포함
+//            );
+//        }
 
     }
 
