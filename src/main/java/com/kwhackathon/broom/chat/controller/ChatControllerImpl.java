@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,6 +33,7 @@ public class ChatControllerImpl implements ChatController {
     private final ParticipantService participantService;
     private final UserService userService;
     private final ChatMessageProducer chatMessageProducer;
+    private final SimpMessagingTemplate messagingTemplate;
 
 
     @Override
@@ -103,6 +105,8 @@ public class ChatControllerImpl implements ChatController {
         } catch (Exception e) {
             System.out.println("[Unexpected Error] " + e.getMessage());
             throw new IllegalStateException("잘못된 접근입니다.");
+
+
         }
     }
 
