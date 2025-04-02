@@ -34,7 +34,13 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // 키가 Authorization인 헤더가 없는 경우, bearer로 시작하지 않는 경우 다음 필터로 넘어감
         if (authorization == null || !authorization.startsWith("bearer")) {
-            filterChain.doFilter(request, response);
+            // response body
+            response.setCharacterEncoding("UTF-8");
+            PrintWriter writer = response.getWriter();
+            writer.print("올바르지 않은 엑세스 토큰입니다.");
+
+            // response status code
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
