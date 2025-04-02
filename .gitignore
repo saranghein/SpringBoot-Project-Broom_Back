@@ -33,6 +33,7 @@ ChatMessageListener.java
 config
 RabbitmaConfig.java
 WebSocketConfig.java
+AckMessageListener.java
 ### IntelliJ IDEA ###
 .idea
 *.iws

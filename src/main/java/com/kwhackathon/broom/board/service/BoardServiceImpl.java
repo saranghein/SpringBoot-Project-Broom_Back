@@ -8,6 +8,8 @@ import com.kwhackathon.broom.chat.config.RabbitmqConfig;
 import com.kwhackathon.broom.chat.service.ChatRoomService;
 import com.kwhackathon.broom.chat.service.ChatService;
 
+import com.kwhackathon.broom.participant.dto.ParticipantResponse;
+import com.kwhackathon.broom.participant.service.ParticipantService;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -56,6 +58,7 @@ public class BoardServiceImpl implements BoardService {
         Participant participant = new Participant(null, 0L, user, board,false,null);
         participantRepository.save(participant);
         chatRoomService.createChatRoom(board.getBoardId()); // 채팅방이 생성될 때 RabbitMQ 동적 큐도 생성
+        chatRoomService.createUserRoom(user.getNickname(), board.getBoardId());// 유저 큐 생성
         return new BoardId(board.getBoardId());
     }
 
@@ -117,7 +120,13 @@ public class BoardServiceImpl implements BoardService {
         if (!board.getUser().getUserId().equals(userId)) {
             throw new IllegalArgumentException("작성자만 삭제할 수 있습니다.");
         }
+
+        // 채팅방 큐 삭제
         chatRoomService.deleteChatRoom(boardId);
+
+        // 유저 큐 삭제
+        chatRoomService.deleteAllUserRooms(boardId);
+
         boardRepository.deleteById(boardId);
 
     }

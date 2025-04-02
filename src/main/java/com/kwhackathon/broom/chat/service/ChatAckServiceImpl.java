@@ -1,27 +1,29 @@
 package com.kwhackathon.broom.chat.service;
 
+import com.kwhackathon.broom.chat.config.BroomProperties;
 import com.kwhackathon.broom.chat.dto.ChatAckRequest;
-import com.kwhackathon.broom.chat.dto.ChatAckResponse;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ChatAckServiceImpl implements ChatAckService {
-
     private final SimpMessagingTemplate messagingTemplate;
-    @Value("${broom.user-queue-prefix}")
-    static String USER_QUEUE_PREFIX;
-
+    private final BroomProperties broomProperties;
 
     @Override
-    public void sendAckMessage(ChatAckRequest.Request chatAckRequest) {
-        messagingTemplate.convertAndSendToUser(
-                chatAckRequest.getSenderId(),
-                USER_QUEUE_PREFIX + chatAckRequest.getBoardId(),
-                ChatAckResponse.Response.toResponse(chatAckRequest));
+    public void sendAckMessage(ChatAckRequest.Request ack) {
+        String destination = "/queue/" + broomProperties.getAck().getRoutingPrefix()
+                + ack.getSenderNickname() + "." + ack.getBoardId();
+
+        System.out.println("📬 ACK WebSocket 전송: " + destination);
+
+        messagingTemplate.convertAndSend(destination, ack); // ✅ convertAndSend 사용
     }
+
 }
 

@@ -12,7 +12,7 @@ public class ChatAckRequest {
         private String status;
         private int statusCode;
         private String message;
-        private String senderId;
+        private String senderNickname;
         private String boardId;
     }
 }
