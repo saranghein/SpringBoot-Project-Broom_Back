@@ -5,6 +5,7 @@ import com.kwhackathon.broom.board.repository.BoardRepository;
 import com.kwhackathon.broom.board.service.BoardService;
 import com.kwhackathon.broom.chat.entity.Chat;
 import com.kwhackathon.broom.chat.repository.ChatRepository;
+import com.kwhackathon.broom.chat.service.ChatRoomService;
 import com.kwhackathon.broom.participant.dto.ParticipantResponse;
 import com.kwhackathon.broom.participant.entity.Participant;
 import com.kwhackathon.broom.participant.repository.ParticipantRepository;
@@ -15,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +33,7 @@ public class ParticipantServiceImpl implements ParticipantService {
     private final BoardService boardService;
     private final UserService userService;
     private final ChatRepository chatRepository;
+    private final ChatRoomService chatRoomService;
 
     // 해당 채팅방의 참여자 목록 조회
     @Override
@@ -42,7 +43,7 @@ public class ParticipantServiceImpl implements ParticipantService {
     public ParticipantResponse.ParticipantList getParticipantsByBoardId(String boardId) {
 
         // 참가자 조회
-        List<Participant> participants=participantRepository.findActiveParticipantsByBoardId(boardId);
+        List<Participant> participants = participantRepository.findActiveParticipantsByBoardId(boardId);
 
         // 작성자 조회
         Participant author = participants.stream()
@@ -87,6 +88,11 @@ public class ParticipantServiceImpl implements ParticipantService {
         participant.setBoard(board);
         participant.setUnread(0L); // 기본적으로 안 읽은 메시지 수는 0
         participantRepository.save(participant); // 새 참가자를 저장
+
+        // 유저 당 큐 생성
+        chatRoomService.createUserRoom(user.getNickname(), boardId);
+
+
     }
 
     @Override
@@ -100,13 +106,17 @@ public class ParticipantServiceImpl implements ParticipantService {
     @Override
     @Transactional
     public boolean deleteParticipantByBoardIdAndUserId(String boardId, String userId) {
-
+        // User 엔티티 조회
+        User user = userService.loadUserByUsername(userId);
+        String userNickname = user.getNickname();
         // participant_id를 NULL로 변경
-        chatRepository.setParticipantToNull(userId,boardId);
+        chatRepository.setParticipantToNull(userId, boardId);
 
         // 참여자 삭제
         int deletedCount = participantRepository.deleteByUserIdAndBoardId(userId, boardId);
 
+        // 유저 당 큐 삭제
+        chatRoomService.deleteUserRoom(boardId, userNickname);
         return deletedCount > 0;
 
     }

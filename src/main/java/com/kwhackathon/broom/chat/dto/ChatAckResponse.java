@@ -10,18 +10,11 @@ public class ChatAckResponse {
     @NoArgsConstructor
     public static class Response {
         // SUCCESS, ERROR, UNDETECTED
-        private String status;    // 오류 상태
-        private int statusCode;   // STOMP/WebSocket 상태 코드
-        private String message;   // 오류 메시지
+        private String status;
+        private int statusCode;
+        private String message;
+        private String boardId;
 
-        // Request -> Response
-        public static Response toResponse(ChatAckRequest.Request chatAckRequest){
-            return new Response(
-                    chatAckRequest.getStatus(),
-                    chatAckRequest.getStatusCode(),
-                    chatAckRequest.getMessage()
-            );
-        }
     }
 
 }

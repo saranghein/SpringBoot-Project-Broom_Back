@@ -18,7 +18,7 @@ public class ChatRequest {
     public static class Message{
         private String boardId; // 채팅방 ID (게시판 ID)
         private String message; // 보낼 메시지
-
+        private String senderName;
         // Request.Message -> Chat
         public static Chat toEntity(Message message, Participant participant, Board board){
             return new Chat(

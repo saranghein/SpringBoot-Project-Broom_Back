@@ -1,10 +1,13 @@
 package com.kwhackathon.broom.chat.component;
 
+import com.kwhackathon.broom.chat.dto.ChatAckRequest;
 import com.kwhackathon.broom.chat.dto.ChatRequest;
 import com.kwhackathon.broom.chat.dto.ChatResponse;
 import com.kwhackathon.broom.chat.entity.Chat;
+import com.kwhackathon.broom.chat.service.AckStatus;
 import com.kwhackathon.broom.chat.service.ChatAckService;
 import com.kwhackathon.broom.chat.service.ChatService;
+import com.kwhackathon.broom.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +20,7 @@ public class ChatMessageProducer {//메시지를 RabbitMQ로 전송
     private final RabbitTemplate rabbitTemplate;
     private final ChatService chatService;
     private final ChatAckService chatAckService;
+    private final UserService userService;
     @Value("${broom.exchange-name}")
     private String EXCHANGE_NAME;
     @Value("${broom.routing-prefix}")
@@ -40,15 +44,28 @@ public class ChatMessageProducer {//메시지를 RabbitMQ로 전송
             String routingKey = ROUTING_KEY_PREFIX + roomId;
 
             // Server -> RabbitMQ로 메시지 전송
-            System.out.println("📩 RabbitMQ 전송: exchange=" + EXCHANGE_NAME + ", routingKey=" + routingKey);
+            System.out.println("RabbitMQ 전송: exchange=" + EXCHANGE_NAME + ", routingKey=" + routingKey);
 
-            // 수신 완료 ack 전송
-//            chatAckService.sendAckMessage();
+
             rabbitTemplate.convertAndSend(EXCHANGE_NAME, routingKey, responseMessage);
+            // 수신 완료 ack 전송
+            chatAckService.sendAckMessage(new ChatAckRequest.Request(
+                    AckStatus.SUCCESS.toString(),
+                    200,
+                    "메시지 전송 성공",
+                    messageDto.getSenderName(),
+                    roomId
+            ));
 
         } catch (Exception e) {
             // 수신 실패 ack 전송
-//            chatAckService.sendErrorMessage("오류발생", "", "");
+            chatAckService.sendAckMessage(new ChatAckRequest.Request(
+                    AckStatus.ERROR.toString(),
+                    500,
+                    "메시지 전송 중 오류 발생",
+                    messageDto.getSenderName(),
+                    messageDto.getBoardId()
+            ));
             System.err.println("🚨 메시지 전송 중 오류 발생: " + e.getMessage());
 
         }

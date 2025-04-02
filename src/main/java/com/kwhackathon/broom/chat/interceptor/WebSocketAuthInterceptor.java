@@ -47,7 +47,14 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
             try {
                 // StompPrincipal 생성 및 설정
                 StompPrincipal principal = new StompPrincipal(jwtUtil.getUserId(token));
+                accessor.setLeaveMutable(true);  // 이걸 추가!!
+
                 accessor.setUser(principal);
+                // WebSocketAuthInterceptor 안에 추가
+                String userId = jwtUtil.getUserId(token);
+                System.out.println("🧾 JWT에서 추출한 userId: " + userId);
+                System.out.println("✅ StompPrincipal 설정됨: " + principal.getName());
+
 
                 // 세션에 Principal 저장
                 accessor.getSessionAttributes().put("principal", principal);
