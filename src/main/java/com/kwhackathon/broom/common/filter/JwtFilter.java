@@ -32,8 +32,14 @@ public class JwtFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         String authorization = request.getHeader("Authorization");
 
-        // 키가 Authorization인 헤더가 없는 경우, bearer로 시작하지 않는 경우 다음 필터로 넘어감
-        if (authorization == null || !authorization.startsWith("bearer")) {
+        // 키가 Authorization인 헤더가 없는 경우 다음 필터로 넘어감
+        if (authorization == null) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // bearer로 시작하지 않는 경우 예외 발생
+        if (!authorization.startsWith("bearer")) {
             // response body
             response.setCharacterEncoding("UTF-8");
             PrintWriter writer = response.getWriter();
