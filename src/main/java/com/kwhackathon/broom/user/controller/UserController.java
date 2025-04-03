@@ -76,7 +76,7 @@ public class UserController implements UserOperations {
         try {
             TokenDto tokens = userService.reissue(request.getCookies());
 
-            response.setHeader("Authorization", "Bearer " + tokens.getAccessToken());
+            response.setHeader("Authorization", "bearer " + tokens.getAccessToken());
             response.addCookie(cookieGenerator.generateCookie("refresh", tokens.getRefreshToken(), 24 * 60 * 60));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
