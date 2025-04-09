@@ -78,7 +78,7 @@ public interface BoardRepository extends JpaRepository<Board, String> {
                         FROM Board b
                         LEFT JOIN Participant p ON p.board.boardId = b.boardId
                         LEFT JOIN Bookmark bm ON bm.board.boardId = b.boardId AND bm.user.userId = :userId
-                        WHERE b.createdAt >= :sevenDaysAgo
+                        WHERE b.createdAt >= :sevenDaysAgo AND b.personnel - SUM(CASE WHEN p.isExpelled = false AND (b.user.userId != p.user.userId) THEN 1 ELSE 0 END) > 0
                         GROUP BY b.boardId
                         ORDER BY b.personnel - SUM(CASE WHEN p.isExpelled = false AND (b.user.userId != p.user.userId) THEN 1 ELSE 0 END) ASC, b.createdAt ASC
                                         """)
