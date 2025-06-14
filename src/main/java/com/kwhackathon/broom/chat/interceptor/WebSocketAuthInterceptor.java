@@ -35,8 +35,8 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
                 throw new RuntimeException("Authorization 헤더가 없습니다.");
             }
 
-            String token = authHeaders.get(0);
-
+//            String token = authHeaders.get(0);
+            String token = authHeaders.getFirst();
             // Bearer 토큰인지 확인 후 "Bearer " 제거
             if (token.startsWith("bearer ")) {
                 token = token.substring(7);
@@ -57,6 +57,9 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
 
 
                 // 세션에 Principal 저장
+                if(accessor.getSessionAttributes()==null){
+                    throw new RuntimeException("JWT 검증 중 예외 발생");
+                }
                 accessor.getSessionAttributes().put("principal", principal);
 
                 // Spring Security의 SecurityContext에 Principal 설정
