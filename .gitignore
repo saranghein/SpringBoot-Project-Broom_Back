@@ -23,6 +23,9 @@ bin/
 application.yml
 application-local.yml
 application-pub.yml
+broom-app.tar
+deploy.sh
+Dockerfile
 application.properties
 secure.properties
 pub.properties
